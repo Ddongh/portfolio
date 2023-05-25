@@ -37,7 +37,8 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use('/api/users', require('./routes/users'));
-app.use('/stockAnalyze', stockRouter);
+app.use('/api/stock', stockRouter);
+
 
 
 app.use('/api/users', require('./routes/users'));
