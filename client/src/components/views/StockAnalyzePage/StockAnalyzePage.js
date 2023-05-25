@@ -1,4 +1,5 @@
 import  React, { useState, useEffect }  from "react";
+import axios from 'axios';
 
 import {
     Form,
@@ -22,13 +23,13 @@ const formItemLayout = {
 
 
 function StockAnalyzePage(props) {
-  debugger;
-  useEffect(() => {
-    fetch('/stockAnalyze')
-      .then(response => response.json())
-      .then(data => console.log(data))
-      .catch(error => console.error(error));
-  }, []);
+  axios.get('/stockAnalyze')
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.error(error);
+  });
 
     const handleSubmit = () => {
 
