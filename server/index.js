@@ -3,6 +3,9 @@ const app = express();
 const path = require("path");
 const cors = require('cors')
 
+const stockRouter = require('./routes/stock');
+
+
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
@@ -32,6 +35,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // support parsing of application/json type post data
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+app.use('/api/users', require('./routes/users'));
+app.use('/stockAnalyze', stockRouter);
+
 
 app.use('/api/users', require('./routes/users'));
 
