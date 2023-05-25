@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { spawn } = require('child_process');
 
 
 router.get('/stockAnalyze', (req, res) => {
@@ -16,7 +17,17 @@ router.post('/stockAnalyze/linear', (req, res) => {
   const method = req.body.method;
   const start = req.body.start;
   const end = req.body.start
-  
+
+  const pythonProcess = spawn('python', ['server/pythons/linear.py', code, method, start, end]);
+
+  pythonProcess.stdout.on('data', (data) => {
+    const output = data.toString();
+    console.log(output);
+
+    // 파이썬 프로세스의 결과값을 클라이언트에 응답합니다.
+    res.json({ result: output });
+  });
+
   res.json({message : "선형회귀분석 posr"});
 });
 
