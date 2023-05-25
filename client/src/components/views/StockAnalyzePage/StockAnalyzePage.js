@@ -1,4 +1,4 @@
-import  React, { useState }  from "react";
+import  React, { useState, useEffect }  from "react";
 
 import {
     Form,
@@ -22,6 +22,13 @@ const formItemLayout = {
 
 
 function StockAnalyzePage(props) {
+  debugger;
+  useEffect(() => {
+    fetch('/stockAnalyze')
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  }, []);
 
     const handleSubmit = () => {
 

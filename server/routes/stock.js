@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  console.log('44444444444444');
-  res.send('GET request to /stockAnalyze');
+router.get('/stockAnalyze', (req, res) => {
+  const responseData = {
+    message: 'stockAnalyze hello'
+  };
+  res.json(responseData);
 });
 
 module.exports = router;

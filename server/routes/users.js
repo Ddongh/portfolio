@@ -33,7 +33,13 @@ router.post("/register", (req, res) => {
     });
 });
 
+router.get('/login', (req, res) => {
+    console.log('33333');
+    res.send('GET request to /login');
+});
+
 router.post("/login", (req, res) => {
+    console.log("333333333333")
     User.findOne({ email: req.body.email }, (err, user) => {
         if (!user)
             return res.json({
@@ -60,6 +66,7 @@ router.post("/login", (req, res) => {
 });
 
 router.get("/logout", auth, (req, res) => {
+    console.log("logout");
     User.findOneAndUpdate({ _id: req.user._id }, { token: "", tokenExp: "" }, (err, doc) => {
         if (err) return res.json({ success: false, err });
         return res.status(200).send({
