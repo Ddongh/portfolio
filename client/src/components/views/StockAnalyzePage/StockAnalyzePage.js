@@ -57,21 +57,17 @@ function StockAnalyzePage(props) {
       end : end,
 
     }
+    if(method === "rnn") {
+      Axios.post('/api/stock/stockAnalyze/rnn', variable)
+      .then(response => {
+          console.log(response.data);
+      })
+    }
 
-    Axios.post('/api/stock/stockAnalyze/linear', variable)
-    .then(response => {
-        console.log(response);
-        // if(response.data.success) {
-        //     console.log(response.data)
-        //     message.success('선형회귀분석 성공')
-        //     // setTimeout(() => {
-        //     //     props.history.push('/')
-        //     // }, 3000)
-                
-        // } else {
-        //     alert('선형회귀 분석 실패')
-        // }
-    })
+    // Axios.post('/api/stock/stockAnalyze/linear', variable)
+    // .then(response => {
+    //     console.log(response.data);
+    // })
   }
 
   const [stock, setStock] = useState('');
@@ -116,7 +112,8 @@ function StockAnalyzePage(props) {
 
           <Form.Item required label="분석방법">
             <Select ref={methodRef} value={method} onChange={onMethodChange}>
-              <Option value="linear_regression">선형회귀</Option>
+              {/* <Option value="linear_regression">선형회귀</Option> */}
+              <Option value="rnn">RNN(순환신경망)</Option>
             </Select>
             
           </Form.Item>
