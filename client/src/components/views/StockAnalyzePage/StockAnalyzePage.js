@@ -60,16 +60,17 @@ function StockAnalyzePage(props) {
 
     Axios.post('/api/stock/stockAnalyze/linear', variable)
     .then(response => {
-        if(response.data.success) {
-            console.log(response.data)
-            message.success('선형회귀분석 성공')
-            // setTimeout(() => {
-            //     props.history.push('/')
-            // }, 3000)
+        console.log(response);
+        // if(response.data.success) {
+        //     console.log(response.data)
+        //     message.success('선형회귀분석 성공')
+        //     // setTimeout(() => {
+        //     //     props.history.push('/')
+        //     // }, 3000)
                 
-        } else {
-            alert('선형회귀 분석 실패')
-        }
+        // } else {
+        //     alert('선형회귀 분석 실패')
+        // }
     })
   }
 
