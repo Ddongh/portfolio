@@ -84,19 +84,11 @@ def perform_rnn_analysis(code, method, start, end):
     # 날짜와 각 열을 리스트로 변환
     date_data = df.index.strftime('%Y-%m-%d').tolist()  # 날짜 데이터를 년월일 형식의 문자열로 변환하여 리스트로 저장
 
-
-    output_data["data"] = []
-    for index, row in df.iterrows():
-        data = {
-            "date": index.strftime("%Y-%m-%d"),  # Convert date to string format
-            "Open": str(row["Open"]),
-            "High": str(row["High"]),
-            "Low": str(row["Low"]),
-            "Close": str(row["Close"]),
-            "Adj Close": str(row["Adj Close"]),
-            "Volume": str(row["Volume"])
-        }
-        output_data["data"].append(data)
+    # 각 열을 리스트로 변환하여 output_data에 저장
+    for column in df.columns:
+        column_data = df[column].tolist()  # 각 열을 리스트로 변환
+        output_data[column] = column_data
+    output_data["date"] = date_data
 
     # JSON 형태로 변환하여 리턴
     try:

@@ -36,12 +36,22 @@ router.post('/stockAnalyze/rnn', (req, res) => {
     console.log("Exit code: " + code);
     console.log(output)
 
-    res.json(output); // JSON 데이터를 클라이언트에 전달
+    // output에서 필요한 데이터만 추출
+    const filteredOutput = output.match(/{"Close_predict":.*"date":\s*\[.*\]}/);
+    if (filteredOutput) {
+      try {
+        const jsonData = JSON.parse(filteredOutput[0]); // JSON 형식으로 파싱
+        res.json({ result: jsonData });
+      } catch (error) {
+        console.log("Error parsing JSON:", error);
+        res.status(500).json({ error: "Error parsing JSON" });
+      }
+    } else {
+      console.log("Filtered output not found");
+      res.status(500).json({ error: "Filtered output not found" });
+    }
   });
 });
-
- 
-
 
 router.post('/stockAnalyze/linear', (req, res) => {
   console.log("선형회귀분석 라우터 시작");

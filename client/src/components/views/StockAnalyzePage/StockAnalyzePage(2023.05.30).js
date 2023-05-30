@@ -1,7 +1,5 @@
 import  React, { useState, useEffect, useReact, useRef } from "react";
 import Axios from 'axios';
-import AnalyzeForm from "./AnalyzeForm";
-import AnalyzeResult from "./AnalyzeResult"
 
 import {
   Form,
@@ -96,30 +94,46 @@ function StockAnalyzePage(props) {
     setEnd(e.target.value);
   }
 
-  if(data == "") {
-    return (
-      <div className="app">
-          <AnalyzeForm
-          stockRef={stockRef}
-          stock={stock}
-          onStockChange={onStockChange}
-          methodRef={methodRef}
-          method={method}
-          onMethodChange={onMethodChange}
-          startRef={startRef}
-          onStartChange={onStartChange}
-          endRef={endRef}
-          onEndChange={onEndChange}
-          handleSubmit={handleSubmit}
-          />
+
+
+    
+  return (
+    <div className="app">
+        <h2>종목 및 옵션 선택</h2>
+        <Form style={{ minWidth: '375px' }} {...formItemLayout} onSubmit={handleSubmit} >
+
+          <Form.Item required label="종목">
+            <Select ref={stockRef} value={stock} onChange={onStockChange}>
+              <Option value="005930" default>삼성전자</Option>
+              <Option value="035720">카카오</Option>
+              <Option value="035420">네이버</Option>
+            </Select>
+            
+          </Form.Item>
+
+          <Form.Item required label="분석방법">
+            <Select ref={methodRef} value={method} onChange={onMethodChange}>
+              {/* <Option value="linear_regression">선형회귀</Option> */}
+              <Option value="rnn">RNN(순환신경망)</Option>
+            </Select>
+            
+          </Form.Item>
+
+          <Form.Item required label="시작일">
+            <Input ref={startRef} type="date" onChange={onStartChange}></Input>               
+          </Form.Item>
+
+          <Form.Item required label="종료일">
+            <Input ref={endRef} type="date" onChange={onEndChange}></Input>
+          </Form.Item>              
+
+          <Button type='primary' size="large" onClick={handleSubmit}>
+                분석하기
+            </Button>
+
+        </Form>
       </div>
-    );
-  } else {
-    return (
-      <AnalyzeResult data={data} />
-    )
-  }
-  
+  );
 };
 
 export default StockAnalyzePage
