@@ -18,6 +18,7 @@ function AnalyzeForm(props) {
   const {
     stockRef,
     stock,
+    stockName,
     onStockChange,
     methodRef,
     method,
@@ -34,7 +35,7 @@ function AnalyzeForm(props) {
       <h2>종목 및 옵션 선택</h2>
       <Form style={{ minWidth: '375px' }} {...formItemLayout} onSubmit={handleSubmit} >
         <Form.Item required label="종목">
-          <Select ref={stockRef} value={stock} onChange={onStockChange}>
+          <Select ref={stockRef} stockName={stockName} value={stock} onChange={onStockChange}>
             <Option value="005930" >삼성전자</Option>
             <Option value="035720">카카오</Option>
             <Option value="035420">네이버</Option>

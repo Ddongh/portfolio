@@ -38,6 +38,7 @@ app.use(cookieParser());
 
 app.use('/api/users', require('./routes/users'));
 app.use('/api/stock', stockRouter);
+app.use('/api/openai', require("./routes/openAI"))
 
 
 
