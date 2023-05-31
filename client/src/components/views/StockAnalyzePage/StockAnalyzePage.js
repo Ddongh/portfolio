@@ -66,7 +66,8 @@ function StockAnalyzePage(props) {
           setData(response.data);
       })
     }
-
+  
+  
     // Axios.post('/api/stock/stockAnalyze/linear', variable)
     // .then(response => {
     //     console.log(response.data);

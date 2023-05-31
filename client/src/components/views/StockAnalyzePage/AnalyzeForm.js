@@ -35,7 +35,7 @@ function AnalyzeForm(props) {
       <Form style={{ minWidth: '375px' }} {...formItemLayout} onSubmit={handleSubmit} >
         <Form.Item required label="종목">
           <Select ref={stockRef} value={stock} onChange={onStockChange}>
-            <Option value="005930" default>삼성전자</Option>
+            <Option value="005930" >삼성전자</Option>
             <Option value="035720">카카오</Option>
             <Option value="035420">네이버</Option>
           </Select>
@@ -44,7 +44,7 @@ function AnalyzeForm(props) {
         <Form.Item required label="분석방법">
           <Select ref={methodRef} value={method} onChange={onMethodChange}>
             {/* <Option value="linear_regression">선형회귀</Option> */}
-            <Option value="rnn">RNN(순환신경망)</Option>
+            <Option value="rnn" >RNN(순환신경망)</Option>
           </Select>
         </Form.Item>
 

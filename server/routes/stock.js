@@ -25,6 +25,7 @@ router.post('/stockAnalyze/rnn', (req, res) => {
   const pythonProcess = spawn('python3', ['server/pythons/rnn.py', code, method, start, end]);
 
   let output = '';
+  let tmp = "";
 
   pythonProcess.stdout.on('data', (data) => {
     output += data.toString();
@@ -34,9 +35,15 @@ router.post('/stockAnalyze/rnn', (req, res) => {
   pythonProcess.on('close', (code) => {
     console.log("순환신경망 파이썬 파일 실행 종료");
     console.log("Exit code: " + code);
-    console.log(output)
+    // console.log(output)
+    // let tmp = output.split("^")
+    console.log("####################################");
+    console.log(output.split("^")[1]);
+    console.log("####################################");
+    tmp = output.split("^")[1];
+    tmp = JSON.parse(tmp)
 
-    res.json(output); // JSON 데이터를 클라이언트에 전달
+    res.json(tmp); // JSON 데이터를 클라이언트에 전달
   });
 });
 
@@ -66,6 +73,7 @@ router.post('/stockAnalyze/linear', (req, res) => {
     console.log("선형회귀 파이썬 파일 실행 종료");
     console.log("Exit code: " + code);
     try {
+
       const jsonData = JSON.parse(output); // JSON 형식으로 파싱
       res.json({ result: jsonData });
     } catch (error) {

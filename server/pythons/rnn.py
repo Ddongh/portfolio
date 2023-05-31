@@ -119,4 +119,5 @@ if __name__ == "__main__":
     # 선형 회귀 분석을 수행하고 결과를 출력합니다.
     analysis_result = perform_rnn_analysis(code, method, start, end)
     if analysis_result is not None:
+        print("^")
         print(analysis_result)

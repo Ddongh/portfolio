@@ -1,25 +1,31 @@
-import React from "react"
+import React from "react";
+import { ChartCanvas, Chart } from 'react-stockcharts';
+import { CandlestickSeries } from 'react-stockcharts/lib/series';
+import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
+import { fitWidth } from 'react-stockcharts/lib/helper';
+import { discontinuousTimeScaleProvider } from 'react-stockcharts/lib/scale';
+import { last } from 'react-stockcharts/lib/utils';
 
-const AnalyzeResult = (props) => {
-
-    const { data } = props;
-    
-    // const date = data.result.date;
-    // const open_price = data.result.Open;
-    // const close_price = data.result.Close;
-    // // const adj_close_price = data.result.Adj Close;
-    // const high_price = data.result.High;
-    // const low_price = data.result.Low;
-    // const volume = data.result.Volume;
-
-    // const close_predict = data.result.Close_predict;
-    // const volume_predict = data.result.Volume_predict;
+const AnalyzeResult = ({ data, width, ratio }) => {
     debugger;
-
+    // data = data.data;
+    const xScaleProvider = discontinuousTimeScaleProvider.inputDateAccessor((d) => new Date(d.date));
+    const { data: chartData, xScale, xAccessor, displayXAccessor } = xScaleProvider(data);
+  
+    const start = xAccessor(last(chartData));
+    const end = xAccessor(chartData[Math.max(0, chartData.length - 150)]);
+    const xExtents = [start, end];
+  
     return (
-        // <h1>{ data.result.Close }</h1>
-        <h1>testssss</h1>
+      <ChartCanvas width={width} height={400} ratio={ratio} margin={{ left: 50, right: 50, top: 10, bottom: 30 }} type="svg" seriesName="MSFT" data={chartData} xScale={xScale} xAccessor={xAccessor} displayXAccessor={displayXAccessor} xExtents={xExtents}>
+        <Chart id={1} yExtents={(d) => [d.High, d.Low]}>
+          <XAxis axisAt="bottom" orient="bottom" ticks={6} />
+          <YAxis axisAt="left" orient="left" ticks={5} />
+  
+          <CandlestickSeries />
+        </Chart>
+      </ChartCanvas>
     );
-}
-
-export default AnalyzeResult
+  };
+  
+  export default fitWidth(AnalyzeResult);
