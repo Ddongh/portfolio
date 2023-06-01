@@ -15,8 +15,9 @@ function ChatGPT() {
     // POST 요청 보내기
     axios.post('/api/chatgpt', { question })
       .then(response => {
-        setAnswer(response.data.answer);
-        console.log(response.data.answer)
+        const answer = response.data.answer;
+        console.log(answer);
+        setAnswer(answer);
       })
       .catch(error => {
         console.error('An error occurred:', error);

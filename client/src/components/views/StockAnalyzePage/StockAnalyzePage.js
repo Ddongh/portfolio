@@ -132,7 +132,7 @@ function StockAnalyzePage(props) {
           onEndChange={onEndChange}
           handleSubmit={handleSubmit}
           />
-          <h1>ChatGPT test</h1>
+          <h1>인공지능에게 질문하기</h1>
           <ChatGPT />
       </div>
     );

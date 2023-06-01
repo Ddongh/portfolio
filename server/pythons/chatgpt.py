@@ -3,27 +3,25 @@ import sys
 import json
 
 # OpenAI API 키 설정
-openai.api_key = "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"
+openai.api_key = sys.argv[2]
 
-# 질문을 명령줄 인수로 받기
+# 질문 설정
 question = sys.argv[1]
-# question = "삼성전자에 대해 알려줘"
 
-# GPT 모델 초기화
-model = "gpt-3.5-turbo"
-
-# 대화형 요청 생성
+# 대화형 답변 생성 요청
 response = openai.ChatCompletion.create(
-    model=model,
+    model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
-        {"role": "user", "content": question},
+        {"role": "user", "content": question}
     ]
 )
 
-# 생성된 답변 가져오기
+# 답변 추출
 answer = response.choices[0].message.content.strip()
 
-# JSON 형식으로 답변 출력
-output = json.dumps({"answer": answer})
-print(output)
+# JSON 형식으로 응답 생성
+json_response = json.dumps({'answer': answer})
+
+# JSON 응답 출력
+print(json_response)
