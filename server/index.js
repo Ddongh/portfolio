@@ -38,7 +38,9 @@ app.use(cookieParser());
 
 app.use('/api/users', require('./routes/users'));
 app.use('/api/stock', stockRouter);
-app.use('/api/openai', require("./routes/openAI"))
+// app.use('/api/chatgpt', require("./routes/chatgpt"))
+app.use('/api/chatgpt', require('./routes/chatgpt'));
+
 
 
 

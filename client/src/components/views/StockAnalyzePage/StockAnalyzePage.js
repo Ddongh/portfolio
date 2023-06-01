@@ -13,6 +13,7 @@ import {
   Select,
   message,
 } from 'antd';
+import ChatGPT from "./ChatGPT";
 
 const { Option } = Select;
 
@@ -131,6 +132,8 @@ function StockAnalyzePage(props) {
           onEndChange={onEndChange}
           handleSubmit={handleSubmit}
           />
+          <h1>ChatGPT test</h1>
+          <ChatGPT />
       </div>
     );
   } else {
@@ -145,6 +148,8 @@ function StockAnalyzePage(props) {
 
         <h1>{stockName} 분석결과</h1>
         <CandleStickChart data={data.data} stockName={stockName}  />
+        <h1>ChatGPT test</h1>
+        <ChatGPT />
       </div>
       
     )
