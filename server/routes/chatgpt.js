@@ -13,7 +13,7 @@ router.post('/', (req, res) => {
   console.log(req.body);
 
   const question = req.body.question; // 클라이언트에서 받은 질문
-
+  console.log("question >>> " + question)
   console.log("ChatGPT 파이썬 파일 실행 시작");
   const pythonProcess = spawn('python3', ['server/pythons/chatgpt.py', question, OPENAI_API_KEY]);
 

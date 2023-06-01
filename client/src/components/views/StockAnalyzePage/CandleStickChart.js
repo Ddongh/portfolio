@@ -12,7 +12,6 @@ const CandleStickChart = ({ data, stockName }) => {
           enabled: false,
         },
         title: {
-        //   text: 'Candlestick Chart',
         text: stockName,
         },
         chart: {

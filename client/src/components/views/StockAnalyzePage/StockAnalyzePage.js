@@ -1,36 +1,17 @@
 import  React, { useState, useEffect, useReact, useRef } from "react";
 import Axios from 'axios';
 import AnalyzeForm from "./AnalyzeForm";
-import AnalyzeResult from "./AnalyzeResult"
-import StockLineChart from "./StockLineChart";
-import StockCandleChart from "./StockCandleChart";
-import CandleStickChart from "./CandleStickChart"
-
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  message,
-} from 'antd';
-import ChatGPT from "./ChatGPT";
-
-const { Option } = Select;
-
-const formItemLayout = {
-  labelCol: {
-    xs: { span: 24 },
-    sm: { span: 8 },
-  },
-  wrapperCol: {
-    xs: { span: 24 },
-    sm: { span: 16 },
-  },
-};
+import CandleStickChart from "./CandleStickChart";
+import StockOpenAI from "./StockOpenAI";
 
 function StockAnalyzePage(props) {
 
-  
+  const [stock, setStock] = useState('');
+  const [stockName, setStockName] = useState("");
+  const [method, setMethod] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [data, setData] = useState("")
 
   const stockRef = useRef();
   const methodRef = useRef();
@@ -59,8 +40,6 @@ function StockAnalyzePage(props) {
       return
     };
     
-
-
     const variable = {
       code : stock,
       method : method,
@@ -75,29 +54,9 @@ function StockAnalyzePage(props) {
           setData(response.data);
       })
     }
-  
-  
-    // Axios.post('/api/stock/stockAnalyze/linear', variable)
-    // .then(response => {
-    //     console.log(response.data);
-    // })
   }
-
-  const [stock, setStock] = useState('');
-  const [stockName, setStockName] = useState("");
-  const [method, setMethod] = useState("");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
-  const [data, setData] = useState("")
-
-  // useEffect(() => {
-  //   // 작업 수행
-  //   debugger;
-  //   setStockName(stockRef.current.innerText);
-  // }, [stock]);
   
   const onStockChange = (value, option) => {
-    // debugger;
     setStock(value);
     setStockName(option.props.children);
   }
@@ -107,7 +66,6 @@ function StockAnalyzePage(props) {
   }
 
   const onStartChange = (e) => {
-    // console.log(e.target.value);
     setStart(e.target.value);
   }
 
@@ -132,29 +90,19 @@ function StockAnalyzePage(props) {
           onEndChange={onEndChange}
           handleSubmit={handleSubmit}
           />
-          <h1>인공지능에게 질문하기</h1>
-          <ChatGPT />
       </div>
     );
   } else {
     return (
-      // <AnalyzeResult data={data.data} />
       <div className="app">
-        {/* <h1>LineChart</h1>
-        <StockLineChart data={data.data} /> */}
-
-        {/* <h1>CandleChart</h1>
-        <StockCandleChart data={data.data} /> */}
-
         <h1>{stockName} 분석결과</h1>
         <CandleStickChart data={data.data} stockName={stockName}  />
-        <h1>ChatGPT test</h1>
-        <ChatGPT />
+        <h1>{stockName}의 최근 한달간 동향 요약</h1>
+        <StockOpenAI stockName={stockName} />
       </div>
       
     )
   }
-  
 };
 
 export default StockAnalyzePage
