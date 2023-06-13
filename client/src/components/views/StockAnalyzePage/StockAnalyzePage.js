@@ -2,6 +2,7 @@ import  React, { useState } from "react";
 import AnalyzeForm from "./AnalyzeForm";
 import CandleStickChart from "./CandleStickChart";
 import StockOpenAI from "./StockOpenAI";
+import StockQuestion from "./StockQuetion";
 
 function StockAnalyzePage(props) {
 
@@ -12,7 +13,7 @@ function StockAnalyzePage(props) {
     start: '',
     end: '',
     data: '',
-    // question: '',
+    question: '',
     answer: "....Loading....",
   });
 
@@ -27,15 +28,27 @@ function StockAnalyzePage(props) {
           state={state}
           updateState={updateState}
           />
+          <StockQuestion />
       </div>
     );
   } else {
     return (
       <div className="app">
         <h1>{state.stockName} 분석결과</h1>
-        <CandleStickChart data={state.data.data} stockName={state.stockName}  />
+        <CandleStickChart 
+        data={state.data.data} 
+        stockName={state.stockName}  
+        />
         
-        <StockOpenAI stockName={state.stockName} answer={state.answer} />
+        <StockOpenAI 
+        stockName={state.stockName} 
+        answer={state.answer} 
+        />
+
+        <StockQuestion 
+        state={state}
+        updateState={updateState}
+        />
       </div>
       
     )

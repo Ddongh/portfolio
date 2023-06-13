@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
+const { Stock } = require("../models/Stock");
 
 router.use(express.json());
 
@@ -10,6 +11,15 @@ router.get('/stockAnalyze', (req, res) => {
   };
   res.json(responseData);
 });
+
+router.post('/stockAnalyze/question', (req, res) => {
+  const stock = new Stock(req.body);
+
+  stock.save((err, doc) => {
+    if(err) return res.json({success : false, err});
+    return res.status(200).json({success : true})
+  })
+})
 
 router.post('/stockAnalyze/rnn', (req, res) => {
   console.log("순환신경망 라우터 시작");

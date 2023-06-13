@@ -4,7 +4,7 @@ const { spawn } = require('child_process');
 const config = require("../config/key");
 
 const OPENAI_API_KEY = config.OPENAI_API_KEY;
-
+console.log("OPENAI_API_KEY >>> " + OPENAI_API_KEY)
 router.use(express.json());
 
 router.post('/', (req, res) => {
