@@ -34,7 +34,9 @@ router.post('/stockAnalyze/rnn', (req, res) => {
   pythonProcess.on('close', (code) => {
     console.log("순환신경망 파이썬 파일 실행 종료");
     console.log("Exit code: " + code);
-    // console.log(output)
+    console.log("######output start ######")
+    console.log(output)
+    console.log("######output end ######")
 
     // output에서 필요한 데이터만 추출
     const filteredOutput = output.match(/{"Close_predict":.*"date":\s*\[.*\]}/);
