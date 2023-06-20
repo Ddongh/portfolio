@@ -37,6 +37,7 @@ input.error {
   margin-top: -12px;
 }
 
+
 table {
   margin: 0;
   width: 100%;
@@ -50,10 +51,11 @@ table {
   border-spacing: 0;
   display: 'flex'; 
   justify-content: 'center';
-  width: 50%;
 }
 
 th {
   background-color: #dcdde1;
+  width: 10%;
+  
 }
 

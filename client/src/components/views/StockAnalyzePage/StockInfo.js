@@ -1,11 +1,11 @@
 import React from 'react';
 
 const StockInfo = (props) => {
-    debugger;
+    
     const {stock, stockName, method, start, end} = props.state;
     
     return (
-        <div>
+        <div style={{ width:"50%" }}>
             <table>
                 <tr>
                     <th>종목명</th>
@@ -22,6 +22,8 @@ const StockInfo = (props) => {
                 <tr>
                     <th>분석방법</th>
                     <td>{ method }</td>
+                    <th></th>
+                    <td></td>
                 </tr>
             </table>
 
