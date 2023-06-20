@@ -3,6 +3,7 @@ import AnalyzeForm from "./AnalyzeForm";
 import CandleStickChart from "./CandleStickChart";
 import StockOpenAI from "./StockOpenAI";
 import StockQuestion from "./StockQuetion";
+import StockInfo from "./StockInfo";
 
 function StockAnalyzePage(props) {
 
@@ -28,7 +29,11 @@ function StockAnalyzePage(props) {
           state={state}
           updateState={updateState}
           />
-          <StockQuestion />
+          {/* <StockQuestion 
+            state={state}
+            updateState={updateState}
+          /> */}
+          {/* <StockInfo /> */}
       </div>
     );
   } else {
@@ -39,7 +44,9 @@ function StockAnalyzePage(props) {
         data={state.data.data} 
         stockName={state.stockName}  
         />
-        
+        <StockInfo 
+        state={state}
+        />
         <StockOpenAI 
         stockName={state.stockName} 
         answer={state.answer} 

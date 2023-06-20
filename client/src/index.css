@@ -31,9 +31,29 @@ input.error {
   border-color: red;
 }
 
-
 .input-feedback {
   color: red;
   height: 5px;
   margin-top: -12px;
 }
+
+table {
+  margin: 0;
+  width: 100%;
+  table-layout: fixed;
+  background-color: #fff;
+  border: none;
+  border-top: 1px solid #4c4948;
+  border-bottom: 1px solid #e3e3e3;
+  font-size: 14px;
+  border-collapse: separate;
+  border-spacing: 0;
+  display: 'flex'; 
+  justify-content: 'center';
+  width: 50%;
+}
+
+th {
+  background-color: #dcdde1;
+}
+
