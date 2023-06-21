@@ -1,39 +1,37 @@
-import React from 'react';
-import { Input, Button } from 'antd';
+import React, { useRef, useState } from 'react';
+import { Button } from 'antd';
+import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const StockQuestion = (props) => {
-    debugger;
-    const {
-        state,
-        updateState
-    } = props;
-    
-    // const {qustion} = state;
+  const { state, updateState } = props;
 
-    const handleSubmit = () => {
-        alert("질문등록!!!!");
-        updateState("question", e.target.value);
-    }
+  const [editorState, setEditorState] = useState(() =>
+    EditorState.createEmpty()
+  );
 
-    const handleQuestionChange = (e) => {
-        debugger;
-        updateState("question", e.target.value);
-    }
+  const handleSubmit = () => {
+    const contentState = editorState.getCurrentContent();
+    const rawContentState = convertToRaw(contentState);
+    const text = rawContentState.blocks[0].text;
 
-    return (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Editor
-            // question={qustion} 
-            // onChange={handleQuestionChange}
-            />
-            <Button type='primary' size="large" onClick={handleSubmit}>
-                질문등록
-            </Button>
-        </div>
-        
-    );
+    alert("질문 등록: " + text);
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Editor
+        editorState={editorState}
+        onEditorStateChange={setEditorState}
+        wrapperClassName="editor-wrapper"
+        editorClassName="editor"
+      />
+      <Button type='primary' size="large" onClick={handleSubmit}>
+        질문 등록
+      </Button>
+    </div>
+  );
 }
 
 export default StockQuestion;
