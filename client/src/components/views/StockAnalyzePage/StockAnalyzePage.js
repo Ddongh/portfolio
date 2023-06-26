@@ -17,8 +17,14 @@ function StockAnalyzePage(props) {
     question: '',
   });
 
-  const updateState = (key, value) => {
-    setState(prevState => ({ ...prevState, [key]: value }));
+  const updateState = (key, value, callback) => {
+    setState(prevState => {
+      const newState = { ...prevState, [key]: value };
+      if (callback) {
+        callback(newState);
+      }
+      return newState;
+    });
   };
 
   if(state.data == "") {

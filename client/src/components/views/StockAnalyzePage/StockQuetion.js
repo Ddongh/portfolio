@@ -15,8 +15,10 @@ const StockQuestion = (props) => {
     const contentState = editorState.getCurrentContent();
     const rawContentState = convertToRaw(contentState);
     const text = rawContentState.blocks[0].text;
-
-    alert("질문 등록: " + text);
+    
+    updateState("question", text, (newState) => {
+        alert("질문 등록: " + newState.question);
+      });
   }
 
   return (
