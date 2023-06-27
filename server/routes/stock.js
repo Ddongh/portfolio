@@ -13,6 +13,8 @@ router.get('/stockAnalyze', (req, res) => {
 });
 
 router.post('/stockAnalyze/question', (req, res) => {
+  console.log("게시물 등록 라우터!!!!!!!!!!!!!!!!!!!!");
+  console.log("req >>> " + req);
   const stock = new Stock(req.body);
 
   stock.save((err, doc) => {
@@ -59,40 +61,5 @@ router.post('/stockAnalyze/rnn', (req, res) => {
   });
 });
 
- 
-
-
-router.post('/stockAnalyze/linear', (req, res) => {
-  console.log("선형회귀분석 라우터 시작");
-  console.log("#### req.body #### ");
-  console.log(req.body);
-
-  const code = req.body.code;
-  const method = req.body.method;
-  const start = req.body.start;
-  const end = req.body.end;
-
-  console.log("선형회귀 파이썬 파일 실행 시작");
-  const pythonProcess = spawn('python3', ['server/pythons/linear.py', code, method, start, end]);
-
-  let output = '';
-
-  pythonProcess.stdout.on('data', (data) => {
-    output += data.toString();
-  });
-
-  pythonProcess.on('close', (code) => {
-    console.log("선형회귀 파이썬 파일 실행 종료");
-    console.log("Exit code: " + code);
-    try {
-
-      const jsonData = JSON.parse(output); // JSON 형식으로 파싱
-      res.json({ result: jsonData });
-    } catch (error) {
-      console.log("Error parsing JSON:", error);
-      res.status(500).json({ error: "Error parsing JSON" });
-    }
-  });
-});
 
 module.exports = router;

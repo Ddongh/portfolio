@@ -1,7 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
+import Axios from 'axios';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 const StockQuestion = (props) => {
@@ -18,6 +19,33 @@ const StockQuestion = (props) => {
     
     updateState("question", text, (newState) => {
         alert("질문 등록: " + newState.question);
+
+        debugger;
+        const variable = {
+            stock: newState.stock,
+            stockName: newState.stockName,
+            method: newState.method,
+            start: newState.start,
+            end: newState.end,
+            data: newState.data,
+            answer: newState.answer,
+            question: newState.question,
+
+        }
+        
+        Axios.post('/api/stock/stockAnalyze/question', variable)
+            .then(response => {
+                if(response.data.success) {
+                    //console.log(response.data)
+                    message.success('성공적으로 게시했습니다.')
+                    setTimeout(() => {
+                        props.history.push('/')
+                    }, 3000)
+                       
+                } else {
+                    alert('비디오 업로드에 실패했습니다.')
+                }
+            })
       });
   }
 

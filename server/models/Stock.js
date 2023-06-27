@@ -9,14 +9,31 @@ const stockSchema = mongoose.Schema({
         type:String,
         maxlength:50
     },
-    image: String,
-    gptAnswer: {
-        type:String,
-        maxlength:99999
+    stock: {
+        type:String
+    },
+    stockName: {
+        type:String
+    },
+    method: {
+        type:String
+    },
+    start: {
+        type:String
+    },
+    end: {
+        type:String
+    },
+    data: {
+        type:String
+    },
+    answer: {
+        type:String
     },
     question: {
-        type:String,
-        maxlength:99999
+        type:String
     }
     
 })
+
+const User = mongoose.model('Stock', stockSchema);
