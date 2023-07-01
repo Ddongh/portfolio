@@ -14,11 +14,14 @@ router.get('/stockAnalyze', (req, res) => {
 
 router.post('/stockAnalyze/question', (req, res) => {
   console.log("게시물 등록 라우터!!!!!!!!!!!!!!!!!!!!");
-  console.log("req >>> " + req);
+  console.log("req.body >>> " + req.body);
   const stock = new Stock(req.body);
 
   stock.save((err, doc) => {
-    if(err) return res.json({success : false, err});
+    if(err) {
+      console.log(err);
+      return res.json({success : false, err});
+    }
     return res.status(200).json({success : true})
   })
 })
