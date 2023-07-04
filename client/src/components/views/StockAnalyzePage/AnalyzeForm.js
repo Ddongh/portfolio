@@ -61,7 +61,7 @@ function AnalyzeForm(props) {
     Axios.post('/api/chatgpt', { question:tmp })
     .then(response => {
       const answer = response.data.answer;
-      updateState("answer", answer);
+      updateState("ai_answer", answer);
     })
     .catch(error => {
       console.error('An error occurred:', error);

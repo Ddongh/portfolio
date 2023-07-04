@@ -4,10 +4,12 @@ import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import Axios from 'axios';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import { useSelector } from 'react-redux';
 
 const StockQuestion = (props) => {
   const { state, updateState } = props;
-
+  const user = useSelector(state => state.user);
+  
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -20,8 +22,8 @@ const StockQuestion = (props) => {
     updateState("question", text, (newState) => {
         alert("질문 등록: " + newState.question);
 
-        debugger;
         const variable = {
+            writer : user.userData._id,
             stock: newState.stock,
             stockName: newState.stockName,
             method: newState.method,
@@ -43,7 +45,7 @@ const StockQuestion = (props) => {
                     }, 3000)
                        
                 } else {
-                    alert('비디오 업로드에 실패했습니다.')
+                    alert('게시에 실패했습니다.')
                 }
             })
       });

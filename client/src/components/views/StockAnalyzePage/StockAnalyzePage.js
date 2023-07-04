@@ -13,10 +13,10 @@ function StockAnalyzePage(props) {
     start: '',
     end: '',
     data: '',
-    answer: "....Loading....",
+    ai_answer: "....Loading....",
     question: '',
   });
-
+  
   const updateState = (key, value, callback) => {
     setState(prevState => {
       const newState = { ...prevState, [key]: value };
@@ -48,7 +48,7 @@ function StockAnalyzePage(props) {
         
         <StockOpenAI 
         stockName={state.stockName} 
-        answer={state.answer} 
+        ai_answer={state.ai_answer} 
         />
 
         <StockQuestion 

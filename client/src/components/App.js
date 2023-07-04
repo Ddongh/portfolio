@@ -22,7 +22,7 @@ function App() {
           <Route exact path="/" component={Auth(LandingPage, null)} />
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
-          <Route exact path="/stockAnalyze" component={StockAnalyzePage} />
+          <Route exact path="/stockAnalyze" component={Auth(StockAnalyzePage, true)} />
         </Switch>
       </div>
       <Footer />

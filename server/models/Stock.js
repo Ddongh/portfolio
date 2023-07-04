@@ -1,13 +1,10 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const stockSchema = mongoose.Schema({
-    name: {
-        type:String,
-        maxlength:50
-    },
-    email: {
-        type:String,
-        maxlength:50
+    writer : {
+        type: Schema.Types.ObjectId, //User.js - userSchema의 모든 정보를 가져온다
+        ref : 'User'
     },
     stock: {
         type:String
@@ -42,7 +39,7 @@ const stockSchema = mongoose.Schema({
         type:String
     }
     
-})
+}, { timestamps : true }) // true -> 생성날짜와 업데이트 날짜 저장
 
 const Stock = mongoose.model('Stock', stockSchema);
 
