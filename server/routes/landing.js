@@ -4,10 +4,6 @@ const { Stock } = require("../models/Stock");
 
 router.get('/', (req, res) => {
     console.log("Landing Page Router Start!!!!!");
-    // const responseData = {
-    //   message: 'Landing Page Router!!!!!'
-    // };
-    // res.json(responseData);
     Stock.find()
         .populate('writer')
         .exec((err, questions) => {
