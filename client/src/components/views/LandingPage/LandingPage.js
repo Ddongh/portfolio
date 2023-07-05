@@ -1,7 +1,17 @@
 import React from 'react'
 import { FaCode } from "react-icons/fa";
+import Axios from 'axios';
 
 function LandingPage() {
+    debugger;
+    Axios.get('/api/landing')
+        .then(response => {
+        console.log(response.data);
+         })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+
     return (
         <>
             <div className="app">
