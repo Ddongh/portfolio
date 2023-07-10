@@ -2,7 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 
-const CandleStickChart = ({ data, stockName }) => {
+const CandleStickChart = ({ props }) => {
+  const { data, stockName } = props;
   const chartRef = useRef(null);
 
   useEffect(() => {

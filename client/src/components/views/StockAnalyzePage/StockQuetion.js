@@ -5,14 +5,17 @@ import { Editor } from 'react-draft-wysiwyg';
 import Axios from 'axios';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 const StockQuestion = (props) => {
   const { state, updateState } = props;
   const user = useSelector(state => state.user);
-  
+  debugger;
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
+
+  const history = useHistory();
 
   const handleSubmit = () => {
     const contentState = editorState.getCurrentContent();
@@ -41,7 +44,8 @@ const StockQuestion = (props) => {
                     //console.log(response.data)
                     message.success('성공적으로 게시했습니다.')
                     setTimeout(() => {
-                        props.history.push('/')
+                        // props.history.push('/')
+                        history.push('/');
                     }, 3000)
                        
                 } else {

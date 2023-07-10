@@ -21,17 +21,9 @@ const stockSchema = mongoose.Schema({
     end: {
         type:String
     },
-    data: [
-        {
-          date: { type: String },
-          Open: { type: String },
-          High: { type: String },
-          Low: { type: String },
-          Close: { type: String },
-          Adj_Close: { type: String },
-          Volume: { type: String },
-        },
-      ],
+    data: {
+        type: Schema.Types.Mixed
+    },
     answer: {
         type:String
     },

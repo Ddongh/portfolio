@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
-const StockInfo = (props) => {
-    
-    const {stock, stockName, method, start, end} = props.state;
+const StockInfo = (state) => {
+    debugger;
+    const {stock, stockName, method, start, end} = state;
     
     return (
         <div style={{ width:"50%" }}>

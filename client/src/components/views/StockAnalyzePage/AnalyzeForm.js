@@ -54,10 +54,10 @@ function AnalyzeForm(props) {
     Axios.post('/api/stock/stockAnalyze/'+method, variable)
       .then(response => {
           console.log(response.data);
-          updateState("data", response.data);
+          updateState("data", response.data.data);
       })
     
-    let tmp = "최근 한달간 " + stockName + "의 동향을 분석해서 요약해줘";
+    let tmp = "최근 한달간 " + stockName + "의 동향을 분석해서 요약해줘. 줄바꿈이 있을때는 <br>태그 넣어줘";
     Axios.post('/api/chatgpt', { question:tmp })
     .then(response => {
       const answer = response.data.answer;
