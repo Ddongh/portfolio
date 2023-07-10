@@ -7,6 +7,7 @@ import Axios from 'axios';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import ReactHtmlParser from 'react-html-parser';
 
 const AnalyzeResult = (props) => {
     const {stock, stockName, method, start, end, data, answer, question, ai_answer} = props.state;
@@ -42,7 +43,7 @@ const AnalyzeResult = (props) => {
                     </tr>
                     <tr>
                         <th>최근동향</th>
-                        <td colspan="3"> { ai_answer } </td>
+                        <td colspan="3"> { ReactHtmlParser(ai_answer) } </td>
                     </tr>
                 </tbody>
                 

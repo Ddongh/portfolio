@@ -35,6 +35,7 @@
     "openai": "^3.2.1",
     "pip": "0.0.1",
     "react-chartjs-2": "^5.2.0",
+    "react-html-parser": "^2.0.2",
     "react-redux": "^5.0.7",
     "react-stockcharts": "^0.7.8",
     "saslprep": "^1.0.3",
