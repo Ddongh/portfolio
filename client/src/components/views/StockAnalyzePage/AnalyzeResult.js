@@ -8,21 +8,49 @@ import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ReactHtmlParser from 'react-html-parser';
+import { useRef } from 'react';
 
 const AnalyzeResult = (props) => {
     const {stock, stockName, method, start, end, data, answer, question, ai_answer} = props.state;
     const updateState = props.updateState;
     const user = useSelector(state => state.user);
+    const titleRef = useRef();
+
+    const saveQuestion = () => {
+        // titleRef
+        debugger;
+        alert("저장하기!!!!!!!!");
+    }
     
-    const [editorState, setEditorState] = useState(() =>
-        EditorState.createEmpty()
-    );
+    // const [editorState, setEditorState] = useState(() =>
+    //     EditorState.createEmpty()
+    // );
     
     return (
         
         <div style={{ width:"50%" }}>
+            <div style={{marginTop:"10%"}}>
+                <Button type="primary" size="large" onClick={saveQuestion}> 
+                    등록하기
+                </Button>
+            </div>
+            <div>
+                <CandleStickChart props={props.state} />
+            </div>
             <table style={{marginTop:"10%"}}>
+            <colgroup>
+                <col width={"10%"} />
+                <col width={"40%"} />
+                <col width={"10%"} />
+                <col width={"40%"} />
+            </colgroup>
                 <tbody>
+                    <tr>
+                        <th>제목</th>
+                        <td colSpan={3}>
+                            <input ref={titleRef} type='text' style={{width:"100%"}} />
+                        </td>
+                    </tr>
                     <tr>
                         <th>종목명</th>
                         <td>{ stockName }</td>
@@ -46,10 +74,9 @@ const AnalyzeResult = (props) => {
                         <td colspan="3"> { ReactHtmlParser(ai_answer) } </td>
                     </tr>
                 </tbody>
-                
             </table>
-            <div style={{marginTop:"10%"}}>
-                <CandleStickChart props={props.state} />
+            <div>
+                <Editor />
             </div>
             
         </div>

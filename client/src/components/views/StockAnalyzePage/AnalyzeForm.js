@@ -58,7 +58,8 @@ function AnalyzeForm(props) {
       })
     
     let tmp = "최근 한달간 " + stockName + "의 동향을 분석해서 요약해줘. ";
-    tmp += "html의 td태그에 그려줄거니까 <br>, <li> <ol> 등의 태그를 적절히 사용해서 보기좋게 해줘"
+    tmp += "html태그를 적절히 넣어줘"
+    
     Axios.post('/api/chatgpt', { question:tmp })
     .then(response => {
       const answer = response.data.answer;

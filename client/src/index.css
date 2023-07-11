@@ -27,6 +27,13 @@ body {
   height: 100vh;
 }
 
+.app_l {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 input.error {
   border-color: red;
 }

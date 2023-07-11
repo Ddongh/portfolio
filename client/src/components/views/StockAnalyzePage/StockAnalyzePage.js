@@ -40,7 +40,7 @@ function StockAnalyzePage(props) {
     );
   } else { // 분석 결과값이 존재하면 
     return (
-      <div className="app">
+      <div className="app_l">
         <AnalyzeResult 
         state={state}
         updateState={updateState}
