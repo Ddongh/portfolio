@@ -6,6 +6,9 @@ const stockSchema = mongoose.Schema({
         type: Schema.Types.ObjectId, //User.js - userSchema의 모든 정보를 가져온다
         ref : 'User'
     },
+    title: {
+        type:String
+    },
     stock: {
         type:String
     },
@@ -24,7 +27,7 @@ const stockSchema = mongoose.Schema({
     data: {
         type: Schema.Types.Mixed
     },
-    answer: {
+    ai_answer: {
         type:String
     },
     question: {
