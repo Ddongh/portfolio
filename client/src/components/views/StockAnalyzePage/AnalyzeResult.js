@@ -34,18 +34,18 @@ const AnalyzeResult = (props) => {
         const contentState = editorState.getCurrentContent();
         const rawContentState = convertToRaw(contentState);
         const text = rawContentState.blocks[0].text; // 에디터에 작성한 텍스트 가져오기
-    
+        
         const variable = {
-            writer   : user.userData._id,   // 작성자
-            title    : titleRef.current.value,               // 제목
-            stock    : stock,               // 주식코드
-            stockName: stockName,           // 주식이름
-            method   : method,              // 분석방법
-            start    : start,               // 분석 시작일
-            end      : end,                 // 분석 종료일
-            data     : data,                // 크롤링 및 예측 데이터
-            answer   : ai_answer,           // 한달간 동향(openai 답변)
-            question : text,                // 작성한 질문
+            writer   : user.userData._id,       // 작성자
+            title    : titleRef.current.value,  // 제목
+            stock    : stock,                   // 주식코드
+            stockName: stockName,               // 주식이름
+            method   : method,                  // 분석방법
+            start    : start,                   // 분석 시작일
+            end      : end,                     // 분석 종료일
+            data     : data,                    // 크롤링 및 예측 데이터
+            answer   : ai_answer,               // 한달간 동향(openai 답변)
+            question : text,                    // 작성한 질문
         }
         
         Axios.post('/api/stock/stockAnalyze/question', variable)
@@ -56,6 +56,7 @@ const AnalyzeResult = (props) => {
                     setTimeout(() => {
                         // props.history.push('/')
                         history.push('/');
+                        
                     }, 3000)
                        
                 } else {

@@ -1,63 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
+import QuestionList from './QuestionList';
+import QuestionDetail from './QuestionDetail';
 
-function LandingPage() {
-  const [questions, setQuestions] = useState([]);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
-
-  useEffect(() => {
-    Axios.get('/api/landing')
-      .then(response => {
-        setQuestions(response.data.questions);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-  }, []);
-
-  const handleQuestionClick = question => {
-    setSelectedQuestion(question);
-  };
-
-  return (
-    <div className="app">
-      <h2>질문 목록</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>제목</th>
-            <th>주식명</th>
-            <th>분석방법</th>
-            <th>분석 시작일</th>
-            <th>분석 종료일</th>
-            <th>작성일</th>
-          </tr>
-        </thead>
-        <tbody>
-          {questions.map((question, index) => (
-            <tr key={index} onClick={() => handleQuestionClick(question)}>
-                <td>{question.title}</td>
-                <td>{question.stockName}</td>
-                <td>{question.method}</td>
-                <td>{question.start}</td>
-                <td>{question.end}</td>
-                <td>{question.createdAt}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {selectedQuestion && (
-        <div>
-          <h3>선택된 질문</h3>
-          <p>주식: {selectedQuestion.stockName}</p>
-          <p>분석 방법: {selectedQuestion.method}</p>
-          <p>분석 시작일: {selectedQuestion.start}</p>
-          {/* 추가적인 정보를 필요에 맞게 출력할 수 있습니다 */}
-        </div>
-      )}
-    </div>
-  );
+const LandingPage = () => {
+    const [selectedQuestion, setSelectedQuestion] = useState([])
+    if(selectedQuestion.length == 0) {
+        return (
+            <QuestionList setSelectedQuestion={setSelectedQuestion} />
+        );
+    } else {
+        return (
+            <QuestionDetail selectedQuestion={selectedQuestion} />
+        );
+    }
+  
 }
 
 export default LandingPage;
