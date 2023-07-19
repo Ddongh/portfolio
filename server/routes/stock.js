@@ -26,6 +26,26 @@ router.post('/stockAnalyze/question', (req, res) => {
   })
 })
 
+router.get('/stockCodeName', (req, res) => {
+  console.log("주식 코드/이름 저장");
+  const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']);
+
+  let output = '';
+  
+  pythonProcess.stdout.on('data', (data) => {
+    output += data;
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log("######output start ######");
+    console.log(output);
+    console.log("######output end ######");
+    const validJSON = output.replace(/'/g, '"');
+    res.json(JSON.parse(validJSON));
+  });
+});
+
+
 router.post('/stockAnalyze/rnn', (req, res) => {
   console.log("순환신경망 라우터 시작");
   console.log("#### req.body #### ");

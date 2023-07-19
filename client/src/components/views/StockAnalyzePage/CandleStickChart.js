@@ -3,6 +3,7 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 
 const CandleStickChart = ({ props }) => {
+  debugger;
   const { data, stockName } = props;
   const chartRef = useRef(null);
 
