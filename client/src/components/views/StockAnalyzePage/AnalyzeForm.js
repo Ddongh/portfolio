@@ -88,8 +88,9 @@ function AnalyzeForm(props) {
   }
   
   const onStockChange = (value, option) => {
+    debugger;
     updateState("stock", value);
-    updateState("stockName", option.props.children);
+    updateState("stockName", option.props.label);
   }
 
   const onMethodChange = (value) => {
@@ -120,7 +121,7 @@ function AnalyzeForm(props) {
             showSearch
             placeholder="Select a stock"
             optionFilterProp="children"
-            onChange={onChange}
+            onChange={onStockChange}
             onSearch={onSearch}
             filterOption={(input, option) => {
               const nameB = (option?.props.label ?? '').toLowerCase().includes(input.toLowerCase());
