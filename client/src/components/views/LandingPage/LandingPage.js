@@ -7,20 +7,10 @@ import QuestionDetail from './QuestionDetail';
 
 const LandingPage = () => {
     const [selectedQuestion, setSelectedQuestion] = useState([])
-
-    const codeNameSave = () => {
-        Axios.get('/api/stock/stockCodeName')
-        .then(response => {
-            debugger;
-            console.log(response.data);
-        })
-    };
     
     if(selectedQuestion.length == 0) {
         return (
-            <div>
-            <Button onClick={codeNameSave}>주식 코드저장</Button>
-            <QuestionList setSelectedQuestion={setSelectedQuestion} /></div>
+            <QuestionList setSelectedQuestion={setSelectedQuestion} />
             
         );
     } else {

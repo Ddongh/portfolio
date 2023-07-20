@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Axios from 'axios';
 import { Form, Input, Select, Button } from 'antd';
 
@@ -14,7 +14,9 @@ const formItemLayout = {
     sm: { span: 16 },
   },
 };
+////////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////////
 function AnalyzeForm(props) {
   const {
     state,
@@ -23,6 +25,20 @@ function AnalyzeForm(props) {
 
   const {stock, stockName, method, start, end} = state;
 
+  const [codeName, setCodeName] = useState([])
+
+  useEffect(() => {
+    Axios.get('/api/stock/stockCodeName')
+      .then(response => {
+          console.log(response.data);
+          setCodeName(response.data)
+      })
+      .catch(error => {
+        console.error(error);
+        // 에러 처리 로직 추가
+      });
+  }, [])
+  
   const validate = () => {
     if(stock === "") {
       alert("종목을 선택해주십시오");
@@ -88,15 +104,41 @@ function AnalyzeForm(props) {
     updateState("end", e.target.value);
   }
 
+  const onChange = (value) => {
+    console.log(`selected ${value}`);
+  };
+  const onSearch = (value) => {
+    console.log('search:', value);
+  };
+
   return (
     <>
       <h2>종목 및 옵션 선택</h2>
       <Form style={{ minWidth: '375px', textAlign: 'center' }} {...formItemLayout} onSubmit={handleSubmit} >
         <Form.Item required label="종목">
-          <Select stockName={stockName} value={stock} onChange={onStockChange}>
-            <Option value="005930" >삼성전자</Option>
-            <Option value="035720">카카오</Option>
-            <Option value="035420">네이버</Option>
+          <Select
+            showSearch
+            placeholder="Select a stock"
+            optionFilterProp="children"
+            onChange={onChange}
+            onSearch={onSearch}
+            filterOption={(input, option) => {
+              const nameB = (option?.props.label ?? '').toLowerCase().includes(input.toLowerCase());
+              const codeB = (option?.props.value ?? '').toLowerCase().includes(input.toLowerCase());
+              if(nameB) return nameB;
+              return codeB;
+            }
+              
+            }
+          >
+            {Object.keys(codeName).map(key => (
+              <Option key={codeName[key].code} value={codeName[key].code} label={codeName[key].name}>
+                {codeName[key].name} ({codeName[key].code})
+              </Option>
+            ))}
+            {/* <Option value="005930" label="삼성전자">삼성전자(005930)</Option>
+            <Option value="373220" label="LG에너지솔루션">LG에너지솔루션</Option>
+            <Option value="000660" label="SK하이닉스">SK하이닉스</Option> */}
           </Select>
         </Form.Item>
 

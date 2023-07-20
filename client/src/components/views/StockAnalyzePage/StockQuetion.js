@@ -10,7 +10,6 @@ import { useHistory } from 'react-router-dom';
 const StockQuestion = (props) => {
   const { state, updateState } = props;
   const user = useSelector(state => state.user);
-  debugger;
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
