@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
 const { Stock } = require("../models/Stock");
+const iconv = require('iconv-lite');
 
 router.use(express.json());
 
@@ -27,13 +28,14 @@ router.post('/stockAnalyze/question', (req, res) => {
 })
 
 router.get('/stockCodeName', (req, res) => {
-  console.log("주식 코드/이름 저장");
+  console.log("주식 코드/이름 크롤링");
   const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']);
 
   let output = '';
   
   pythonProcess.stdout.on('data', (data) => {
-    output += data;
+    // output += data;
+    output += iconv.decode(data, 'euc-kr'); // 한글깨짐 (디코딩)
   });
 
   pythonProcess.on('close', (code) => {
@@ -41,6 +43,7 @@ router.get('/stockCodeName', (req, res) => {
     console.log(output);
     console.log("######output end ######");
     const validJSON = output.replace(/'/g, '"');
+    
     res.json(JSON.parse(validJSON));
   });
 });

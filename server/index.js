@@ -6,6 +6,8 @@ const cors = require('cors')
 const stockRouter = require('./routes/stock');
 
 
+
+
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
