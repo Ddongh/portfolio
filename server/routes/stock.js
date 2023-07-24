@@ -29,6 +29,7 @@ router.post('/stockAnalyze/question', (req, res) => {
 
 router.get('/stockCodeName', (req, res) => {
   console.log("주식 코드/이름 크롤링");
+
   const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']);
 
   let output = '';

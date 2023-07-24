@@ -28,15 +28,30 @@ function AnalyzeForm(props) {
   const [codeName, setCodeName] = useState([])
 
   useEffect(() => {
-    Axios.get('/api/stock/stockCodeName')
+    if(sessionStorage.getItem("codeNameList") == null) { // 세션 스토리지에 종목 코드와 이름이 없으면 서버에 요청
+      const s = performance.now();
+      Axios.get('/api/stock/stockCodeName')
       .then(response => {
+         sessionStorage.setItem("codeNameList", JSON.stringify(response.data)); // 세션 스토리지에 저장
+        //  sessionStorage.setItem("codeName", response.data);
+         
           console.log(response.data);
           setCodeName(response.data)
+          const e = performance.now();
+          console.log("서버요청 소요 시간(ms) : ", e-s);
       })
       .catch(error => {
         console.error(error);
         // 에러 처리 로직 추가
       });
+    } else { // 세션 스토리지에 데이터가 있으면 서버에 요청하지 않고 사용
+      const s = performance.now();
+      const codeNameList = sessionStorage.getItem("codeNameList");
+      setCodeName(JSON.parse(codeNameList));
+      const e = performance.now()
+      console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
+    }
+    
   }, [])
   
   const validate = () => {
