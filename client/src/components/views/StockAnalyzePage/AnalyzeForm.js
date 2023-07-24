@@ -28,17 +28,19 @@ function AnalyzeForm(props) {
   const [codeName, setCodeName] = useState([])
 
   useEffect(() => {
-    if(sessionStorage.getItem("codeNameList") == null) { // 세션 스토리지에 종목 코드와 이름이 없으면 서버에 요청
+    const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList"));
+    debugger;
+    // if(sessionStorage.getItem("codeNameList") == null) { // 세션 스토리지에 종목 코드와 이름이 없으면 서버에 요청
+    if(localCodeNameList == null || localCodeNameList.expire < Date.now()) { // 로컬스토리지에 저장여부 확인 및 만료일자 체크
       const s = performance.now();
       Axios.get('/api/stock/stockCodeName')
       .then(response => {
-         sessionStorage.setItem("codeNameList", JSON.stringify(response.data)); // 세션 스토리지에 저장
-        //  sessionStorage.setItem("codeName", response.data);
-         
-          console.log(response.data);
-          setCodeName(response.data)
-          const e = performance.now();
-          console.log("서버요청 소요 시간(ms) : ", e-s);
+        setCodeName(response.data) // state update
+        localStorage.removeItem("codeNameList") // 로컬스토리지 삭제
+        response.data["expire"] = Date.now() + 60 * 60 * 24 * 1000; // 로컬스토리지 만료일자 지정(초*분*시*1000)
+        localStorage.setItem("codeNameList", JSON.stringify(response.data)); // 로컬스토리지에 저장
+        const e = performance.now();
+        console.log("서버요청 소요 시간(ms) : ", e-s);
       })
       .catch(error => {
         console.error(error);
@@ -46,7 +48,7 @@ function AnalyzeForm(props) {
       });
     } else { // 세션 스토리지에 데이터가 있으면 서버에 요청하지 않고 사용
       const s = performance.now();
-      const codeNameList = sessionStorage.getItem("codeNameList");
+      const codeNameList = localStorage.getItem("codeNameList");
       setCodeName(JSON.parse(codeNameList));
       const e = performance.now()
       console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
