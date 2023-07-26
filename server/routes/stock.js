@@ -40,9 +40,9 @@ router.get('/stockCodeName', (req, res) => {
   });
 
   pythonProcess.on('close', (code) => {
-    console.log("######output start ######");
-    console.log(output);
-    console.log("######output end ######");
+    // console.log("######output start ######");
+    // console.log(output);
+    // console.log("######output end ######");
     const validJSON = output.replace(/'/g, '"');
     
     res.json(JSON.parse(validJSON));
@@ -75,7 +75,12 @@ router.post('/stockAnalyze/rnn', (req, res) => {
     console.log("순환신경망 파이썬 파일 실행 종료");
     console.log("Exit code: " + code);
     console.log("######output start ######")
-    console.log(output)
+    console.log(output.indexOf("Failed download"));
+    if(output.indexOf("Failed download") > -1) {
+      // res.json({"data" : output});
+      res.status(500).json({ error: output });
+      return
+    }
     console.log("######output end ######")
     // let tmp = output.split("^")
     console.log("####################################");

@@ -29,7 +29,6 @@ function AnalyzeForm(props) {
 
   useEffect(() => {
     const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList"));
-    debugger;
     // if(sessionStorage.getItem("codeNameList") == null) { // 세션 스토리지에 종목 코드와 이름이 없으면 서버에 요청
     if(localCodeNameList == null || localCodeNameList.expire < Date.now()) { // 로컬스토리지에 저장여부 확인 및 만료일자 체크
       const s = performance.now();
@@ -90,6 +89,11 @@ function AnalyzeForm(props) {
           console.log(response.data);
           updateState("data", response.data.data);
       })
+      .catch(err => {
+        console.log(err.response.data);
+        alert(stockName + "의" + start + " ~ " + end + "기간에 대한 주가 수집에 실했습니다.")
+        // 에러 처리 로직 추가
+      });
     
     let tmp = "최근 한달간 " + stockName + "의 동향을 분석해서 요약해줘. ";
     tmp += "html태그를 적절히 넣어줘"
@@ -106,7 +110,6 @@ function AnalyzeForm(props) {
   }
   
   const onStockChange = (value, option) => {
-    debugger;
     updateState("stock", value);
     updateState("stockName", option.props.label);
   }
