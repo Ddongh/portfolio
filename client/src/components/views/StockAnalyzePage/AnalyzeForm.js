@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Axios from 'axios';
-import { Form, Input, Select, Button } from 'antd';
+import { Form, Input, Select, Button, message } from 'antd';
 
 const { Option } = Select;
 
@@ -91,7 +91,13 @@ function AnalyzeForm(props) {
       })
       .catch(err => {
         console.log(err.response.data);
-        alert(stockName + "의" + start + " ~ " + end + "기간에 대한 주가 수집에 실했습니다.")
+        message.error({
+          content: stockName + "의 " + start + " ~ " + end + "기간에 대한 주가 수집에 실패했습니다.",
+          top: 2000, 
+          duration: 5,
+        });
+        // message.error(stockName + "의 " + start + " ~ " + end + "기간에 대한 주가 수집에 실패했습니다.", 3);
+        // alert(stockName + "의 " + start + " ~ " + end + "기간에 대한 주가 수집에 실했습니다.")
         // 에러 처리 로직 추가
       });
     
