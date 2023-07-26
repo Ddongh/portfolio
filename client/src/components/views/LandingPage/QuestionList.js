@@ -85,11 +85,21 @@ const QuestionList = ({ setSelectedQuestion }) => {
       ];
 
     return (
-        <div className="app_l">
+        <div className="app">
         <h2>질문 목록</h2>
         {/* <Table dataSource={questions} columns={columns} /> */}
-        <Table style={{width:"50%"}} dataSource={currentQuestions} columns={columns} pagination={true} rowClassName={() => 'custom-row-style'}/>
-        <table style={{ width: "50%" }}>
+        <Table 
+        style={{width:"50%"}} 
+        dataSource={currentQuestions} 
+        columns={columns} 
+        
+        pagination={{
+            total: 10, // 전체 데이터 개수 설정
+            pageSize: questionsPerPage, // 한 페이지당 표시할 데이터 개수 설정
+            onChange: handlePageChange, // 페이지 변경 이벤트 핸들러 설정
+          }}
+        rowClassName={() => 'custom-row-style'}/>
+        {/* <table style={{ width: "50%" }}>
             <thead>
             <tr>
                 <th>제목</th>
@@ -115,16 +125,16 @@ const QuestionList = ({ setSelectedQuestion }) => {
                 </tr>
             ))}
             </tbody>
-        </table>
+        </table> */}
 
         {/* 페이지 네이션 */}
-        <div style={{ marginTop: '20px' }}>
+        {/* <div style={{ marginTop: '20px' }}>
             {pageNumbers.map(number => (
             <button key={number} onClick={() => handlePageChange(number)}>
                 {number}
             </button>
             ))}
-        </div>
+        </div> */}
 
         {/* 선택된 질문 */}
         {/* ... */}

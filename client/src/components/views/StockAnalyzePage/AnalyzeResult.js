@@ -117,7 +117,7 @@ const AnalyzeResult = (props) => {
             <div ref={chartRef} style={{display:"block"}}>
                 <CandleStickChart props={props.state} />
             </div>
-            <table style={{marginTop:"5%"}}>
+            <table class="basicTable" style={{marginTop:"5%"}}>
             <colgroup>
                 <col width={"10%"} />
                 <col width={"40%"} />

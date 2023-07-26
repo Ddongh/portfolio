@@ -45,14 +45,15 @@ input.error {
 }
 
 
-table {
+.basicTable {
   margin: 0;
   width: 100%;
   table-layout: fixed;
   background-color: #fff;
   border: none;
-  border-top: 1px solid #4c4948;
-  border-bottom: 1px solid #e3e3e3;
+  /* border-top: 1px solid #4c4948;
+  border-bottom: 1px solid #e3e3e3; */
+  border: 1px solid #a9abb3;
   font-size: 14px;
   border-collapse: separate;
   border-spacing: 0;
@@ -60,20 +61,16 @@ table {
   justify-content: 'center';
 }
 
-th {
+.basicTable th {
   background-color: #dcdde1;
   width: 10%;
   border: 1px solid #a9abb3;
 }
 
-td {
+.basicTable td {
   border: 1px solid #a9abb3;
 }
 
-.custom-row-style td {
-  padding: 0;
-}
-
-.ant-table-tbody tr  td {
-  padding: 0;
+.ant-table-tbody > tr > td{
+  padding: 5px 5px !important;
 }
