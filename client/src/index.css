@@ -70,3 +70,10 @@ td {
   border: 1px solid #a9abb3;
 }
 
+.custom-row-style td {
+  padding: 0;
+}
+
+.ant-table-tbody tr  td {
+  padding: 0;
+}

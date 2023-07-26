@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Button, Table } from 'antd';
 import Axios from 'axios';
 
 const QuestionList = ({ setSelectedQuestion }) => {
@@ -11,6 +12,7 @@ const QuestionList = ({ setSelectedQuestion }) => {
         Axios.get('/api/landing')
         .then(response => {
             setQuestions(response.data.questions);
+            debugger;
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -38,9 +40,55 @@ const QuestionList = ({ setSelectedQuestion }) => {
         pageNumbers.push(i);
     }
 
+    const rowStyle = { height: '50px' };
+
+    const columns = [
+        {
+          title: '제목',
+          dataIndex: 'title',
+          key: 'title',
+        },
+        {
+          title: '주식명',
+          dataIndex: 'stockName',
+          key: 'stockName',
+        },
+        {
+          title: '분석방법',
+          dataIndex: 'method',
+          key: 'method',
+        },
+        {
+          title: '분석 시작일',
+          dataIndex: 'start',
+          key: 'start',
+        },
+        {
+          title: '분석 종료일',
+          dataIndex: 'end',
+          key: 'end',
+        },
+        {
+          title: '작성일',
+          dataIndex: 'createdAt',
+          key: 'createdAt',
+        },
+        // {
+        //   title: 'Action',
+        //   key: 'action',
+        //   render: (text, record) => (
+        //     <Button onClick={() => handleQuestionClick(record)} type="link">
+        //       View Details
+        //     </Button>
+        //   ),
+        // },
+      ];
+
     return (
         <div className="app_l">
         <h2>질문 목록</h2>
+        {/* <Table dataSource={questions} columns={columns} /> */}
+        <Table style={{width:"50%"}} dataSource={currentQuestions} columns={columns} pagination={true} rowClassName={() => 'custom-row-style'}/>
         <table style={{ width: "50%" }}>
             <thead>
             <tr>

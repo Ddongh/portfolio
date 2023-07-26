@@ -39,6 +39,7 @@ router.get('/stockCodeName', (req, res) => {
   let output = '';
   
   pythonProcess.stdout.on('data', (data) => {
+    
     if (platform === 'win32') { // 윈도우 환경이면
       output += iconv.decode(data, 'euc-kr'); // 윈도우 환경에서 한글깨짐(디코딩)
       console.log("platform >>>> ", platform);
@@ -51,7 +52,10 @@ router.get('/stockCodeName', (req, res) => {
   });
 
   pythonProcess.on('close', (code) => {
-    res.json(JSON.parse(output));
+    // console.log("output >>> ", output);
+    // console.log("data >>> ", data)
+    // res.json(output); // 크롤링 데이터 클라이언트에 전달
+    res.json(JSON.parse(output)); // 크롤링 데이터 클라이언트에 전달
   });
 });
 

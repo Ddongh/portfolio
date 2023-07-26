@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CandleStickChart from './CandleStickChart';
-import { Button, message, Td } from 'antd';
+import { Button, message } from 'antd';
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import Axios from 'axios';
