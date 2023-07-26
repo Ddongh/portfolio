@@ -48,8 +48,9 @@ function AnalyzeForm(props) {
       });
     } else { // 세션 스토리지에 데이터가 있으면 서버에 요청하지 않고 사용
       const s = performance.now();
-      const codeNameList = localStorage.getItem("codeNameList");
-      setCodeName(JSON.parse(codeNameList));
+      //const codeNameList = localStorage.getItem("codeNameList");
+      //setCodeName(JSON.parse(codeNameList));
+      setCodeName(localCodeNameList);
       const e = performance.now()
       console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
     }
