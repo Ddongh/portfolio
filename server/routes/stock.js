@@ -3,6 +3,8 @@ const router = express.Router();
 const { spawn } = require('child_process');
 const { Stock } = require("../models/Stock");
 const iconv = require('iconv-lite');
+const os = require('os');
+
 
 router.use(express.json());
 
@@ -28,24 +30,28 @@ router.post('/stockAnalyze/question', (req, res) => {
 })
 
 router.get('/stockCodeName', (req, res) => {
-  console.log("주식 코드/이름 크롤링");
+  const platform = os.platform();
 
-  const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']);
+  console.log("######### 주식 코드/이름 크롤링 라우터 start #######");
+
+  const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']); // 크롤링 파이썬 파일 실행
 
   let output = '';
   
   pythonProcess.stdout.on('data', (data) => {
-    // output += data;
-    output += iconv.decode(data, 'euc-kr'); // 한글깨짐 (디코딩)
+    if (platform === 'win32') { // 윈도우 환경이면
+      output += iconv.decode(data, 'euc-kr'); // 윈도우 환경에서 한글깨짐(디코딩)
+      console.log("platform >>>> ", platform);
+    } else if (platform === 'darwin') { // 맥 환경이면
+      output += data;
+      console.log("platform >>>> ", platform);
+    } else { // 기타환경이면
+      console.log('현재 환경은 기타 운영체제입니다.');
+    }
   });
 
   pythonProcess.on('close', (code) => {
-    // console.log("######output start ######");
-    // console.log(output);
-    // console.log("######output end ######");
-    const validJSON = output.replace(/'/g, '"');
-    
-    res.json(JSON.parse(validJSON));
+    res.json(JSON.parse(output));
   });
 });
 

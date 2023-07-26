@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CandleStickChart from './CandleStickChart';
-import { Button, message, Td } from 'antd';
+import { Button, message } from 'antd';
 import { EditorState, convertToRaw } from 'draft-js';
 import { Editor } from 'react-draft-wysiwyg';
 import Axios from 'axios';
@@ -76,7 +76,6 @@ const AnalyzeResult = (props) => {
     }
 
     const writeQuestion = () => { //질문하기 버튼 이벤트
-        titleRef.current.style.display = "" ; // 제목 작성 칸 보이기
         editorRef.current.style.display = 'block'; // 에디터 보이기
         setSaveButtonState("block"); // 저장하기 버튼 보이기
         chartRef.current.style.display = 'none'; // 차트 숨기기    
@@ -117,7 +116,7 @@ const AnalyzeResult = (props) => {
             <div ref={chartRef} style={{display:"block"}}>
                 <CandleStickChart props={props.state} />
             </div>
-            <table style={{marginTop:"5%"}}>
+            <table style={{marginTop:"10%"}}>
             <colgroup>
                 <col width={"10%"} />
                 <col width={"40%"} />
@@ -125,10 +124,10 @@ const AnalyzeResult = (props) => {
                 <col width={"40%"} />
             </colgroup>
                 <tbody>
-                    <tr ref={titleRef} style={{display:"none"}}>
+                    <tr>
                         <th>제목</th>
                         <td colSpan={3}>
-                            <input type='text' style={{width:"100%"}} />
+                            <input ref={titleRef} type='text' style={{width:"100%"}} />
                         </td>
                     </tr>
                     <tr>

@@ -63,6 +63,10 @@ table {
 th {
   background-color: #dcdde1;
   width: 10%;
-  
+  border: 1px solid #a9abb3;
+}
+
+td {
+  border: 1px solid #a9abb3;
 }
 

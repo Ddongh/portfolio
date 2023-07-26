@@ -3,7 +3,7 @@ import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 
 const CandleStickChart = ({ props }) => {
-  debugger;
+  
   const { data, stockName } = props;
   const chartRef = useRef(null);
 
@@ -24,7 +24,7 @@ const CandleStickChart = ({ props }) => {
             title: {
               text: 'Price',
             },
-            height: '70%', // Set the height of the price chart
+            height: '60%', // Set the height of the price chart
             top: '0', // Position the price chart at the top
           },
           {
