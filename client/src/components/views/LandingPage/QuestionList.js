@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'antd';
 import Axios from 'axios';
+import { format } from 'date-fns';
 
 const QuestionList = ({ setSelectedQuestion }) => {
     
@@ -20,7 +21,7 @@ const QuestionList = ({ setSelectedQuestion }) => {
     }, [])
     
 
-    useEffect(() => { // 목록 페이지 변경시 해당하는 문서 가져오기
+    useEffect(() => { // 페이지 변경시 해당하는 문서 가져오기
       const variable = { 
         page: currentPage,             // 현재 페이지 번호
         perPage: questionsPerPage,     // 페이지당 표시될 질문 개수
@@ -28,6 +29,10 @@ const QuestionList = ({ setSelectedQuestion }) => {
 
       Axios.get('/api/landing', { params: variable })
       .then(response => {
+          
+          let questions = response.data.questions;
+          let date = new Date(questions[0].createdAt)
+          debugger;
           setQuestions(response.data.questions);
       })
       .catch(error => {
@@ -84,7 +89,6 @@ const QuestionList = ({ setSelectedQuestion }) => {
           style={{width:"50%"}} 
           dataSource={questions} 
           columns={columns} 
-          
           pagination={{
               total: totalCount, // 전체 데이터 개수 설정
               pageSize: questionsPerPage, // 한 페이지당 표시할 데이터 개수 설정
