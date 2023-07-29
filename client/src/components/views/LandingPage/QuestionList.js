@@ -28,7 +28,6 @@ const QuestionList = ({ setSelectedQuestion }) => {
 
       Axios.get('/api/landing', { params: variable })
       .then(response => {
-          
           let questions = response.data.questions;
         //   let date = new Date(questions[0].createdAt)
         //   debugger;
