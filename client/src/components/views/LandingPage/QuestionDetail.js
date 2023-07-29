@@ -11,7 +11,7 @@ import ReactHtmlParser from 'react-html-parser';
 import { useRef } from 'react';
 
 const QuestionDetail = ({ selectedQuestion }) => {
-    const {stock, stockName, method, start, end, data, question, ai_answer} = selectedQuestion;
+    const {stock, stockName, method, start, end, data, question, ai_answer, writer } = selectedQuestion;
 
     const chartRef = useRef();
     const chartButton = useRef();
@@ -38,7 +38,7 @@ const QuestionDetail = ({ selectedQuestion }) => {
             <div ref={chartRef} style={{display:"block"}}>
                 <CandleStickChart props={selectedQuestion} />
             </div>
-            <table style={{marginTop:"10%"}}>
+            <table class="basicTable" style={{marginTop:"10%"}}>
             <colgroup>
                 <col width={"10%"} />
                 <col width={"40%"} />
@@ -67,8 +67,8 @@ const QuestionDetail = ({ selectedQuestion }) => {
                     <tr>
                         <th>분석방법</th>
                         <td>{ method }</td>
-                        <th></th>
-                        <td></td>
+                        <th>작성자</th>
+                        <td>{ writer.name }</td>
                     </tr>
                     <tr>
                         <th>최근동향</th>
@@ -76,7 +76,7 @@ const QuestionDetail = ({ selectedQuestion }) => {
                     </tr>
                     <tr>
                         <th>질문</th>
-                        <td colspan="3">{ question }</td>
+                        <td style={{verticalAlign:"top", height: "300px"}} colspan="3">{ question }</td>
                     </tr>
                 </tbody>
             </table>

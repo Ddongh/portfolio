@@ -16,6 +16,7 @@ const AnalyzeResult = (props) => {
     const user = useSelector(state => state.user);
 
     const titleRef = useRef();
+    const titleInputRef = useRef();
     const chartRef = useRef();
     const chartButton = useRef();
     const editorRef = useRef();
@@ -34,10 +35,10 @@ const AnalyzeResult = (props) => {
         const contentState = editorState.getCurrentContent();
         const rawContentState = convertToRaw(contentState);
         const text = rawContentState.blocks[0].text; // 에디터에 작성한 텍스트 가져오기
-        debugger;
+        
         const variable = {
             writer   : user.userData._id,       // 작성자
-            title    : titleRef.current.value,  // 제목
+            title    : titleInputRef.current.value,  // 제목
             stock    : stock,                   // 주식코드
             stockName: stockName,               // 주식이름
             method   : method,                  // 분석방법
@@ -89,7 +90,7 @@ const AnalyzeResult = (props) => {
         const rawContentState = convertToRaw(contentState);
         const plainText = rawContentState.blocks[0].text; // 에디터에 작성한 텍스트 가져오기
 
-        if(titleRef.current.value == "") {
+        if(titleInputRef.current.value == "") {
             alert("제목을 입력해주세요.");
             return false;
         } 
@@ -128,7 +129,7 @@ const AnalyzeResult = (props) => {
                     <tr ref={titleRef} style={{display:"none"}}>
                         <th>제목</th>
                         <td colSpan={3}>
-                            <input type='text' style={{width:"100%"}} />
+                            <input ref={titleInputRef} type='text' style={{width:"100%"}} />
                         </td>
                     </tr>
                     <tr>
@@ -146,8 +147,8 @@ const AnalyzeResult = (props) => {
                     <tr>
                         <th>분석방법</th>
                         <td>{ method }</td>
-                        <th></th>
-                        <td></td>
+                        <th>작성자</th>
+                        <td>{ user.userData.name }</td>
                     </tr>
                     <tr>
                         <th>최근동향</th>

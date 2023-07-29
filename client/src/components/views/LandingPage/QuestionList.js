@@ -10,6 +10,9 @@ const QuestionList = ({ setSelectedQuestion }) => {
     const [questionsPerPage] = useState(10);            // 페이지에 표시할 질문 개수
     const [totalCount, setTotalCount] = useState(-1);    // 전체 질문 개수
 
+    const onRowSelect = (record, index) => {
+        setSelectedQuestion(record);
+    }
     useEffect(() => { // 페이지 접근시 전제 질문 개수 가져오기
       Axios.get('/api/landing/total')
       .then(response => {
@@ -64,19 +67,38 @@ const QuestionList = ({ setSelectedQuestion }) => {
           key: 'method',
         },
         {
-          title: '분석 시작일',
-          dataIndex: 'start',
-          key: 'start',
+            title: '작성자',
+            dataIndex: 'writer',
+            key: 'writer',
+            render: (writer) => {
+                return (
+                    writer.name
+                );
+            }
         },
-        {
-          title: '분석 종료일',
-          dataIndex: 'end',
-          key: 'end',
-        },
+        // {
+        //   title: '분석 시작일',
+        //   dataIndex: 'start',
+        //   key: 'start',
+        // },
+        // {
+        //   title: '분석 종료일',
+        //   dataIndex: 'end',
+        //   key: 'end',
+        // },
         {
           title: '작성일',
           dataIndex: 'createdAt',
           key: 'createdAt',
+          render: (createdAt) => {
+            if (!createdAt) return null; // createdAt 값이 없을 경우 null 반환
+            const ymd = createdAt.split("T")[0];
+            const hms = createdAt.split("T")[1].split(".")[0];
+            const timeData = ymd + " " + hms;
+            return (
+                timeData
+            );
+          }
         },
       ];
 
@@ -92,7 +114,13 @@ const QuestionList = ({ setSelectedQuestion }) => {
               pageSize: questionsPerPage, // 한 페이지당 표시할 데이터 개수 설정
               onChange: handlePageChange, // 페이지 변경 이벤트 핸들러 설정
             }}
-          rowClassName={() => 'custom-row-style'}/>
+          rowClassName={() => 'custom-row-style'}
+          onRow={(record, rowIndex) => {
+            return {
+              onClick: () => onRowSelect(record, rowIndex), // 각 행을 클릭했을 때 이벤트 처리
+            };
+          }}
+          />
         </div>
     );
 }
