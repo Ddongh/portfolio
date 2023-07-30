@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ReactHtmlParser from 'react-html-parser';
 import { useRef } from 'react';
+import Comment from './Comment';
 
 const QuestionDetail = ({ selectedQuestion }) => {
     const {stock, stockName, method, start, end, data, question, ai_answer, writer } = selectedQuestion;
@@ -80,9 +81,7 @@ const QuestionDetail = ({ selectedQuestion }) => {
                     </tr>
                 </tbody>
             </table>
-            <div ref={editorRef} style={{display:"none", border:"1px solid #dcdde1", height:"500px"}}>
-                {/* <Editor editorState={question} /> */}
-            </div>
+            <Comment selectedQuestion={selectedQuestion} />
             
         </div>
     );

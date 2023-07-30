@@ -43,9 +43,7 @@ app.use('/api/stock', stockRouter);
 // app.use('/api/chatgpt', require("./routes/chatgpt"))
 app.use('/api/chatgpt', require('./routes/chatgpt'));
 app.use('/api/landing', require('./routes/landing'));
-
-
-
+app.use('/api/comment', require('./routes/comment'));
 
 app.use('/api/users', require('./routes/users'));
 
