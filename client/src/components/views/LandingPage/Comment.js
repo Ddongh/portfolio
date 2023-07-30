@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Button} from 'antd'
 import Axios from 'axios';
 import {useSelector} from 'react-redux';
@@ -8,10 +8,26 @@ const Comment = ({selectedQuestion}) => {
     // console.log(selectedQuestion);
     const user = useSelector(state => state.user);
     const [commentValue, setCommentValue] = useState("");
-
+    const [commentList, setCommentList] = useState([]);
     const handleClick = (e) => {
         setCommentValue(e.currentTarget.value);
     }
+
+    useEffect(() => {
+        const variables = {
+            questionId : selectedQuestion._id
+        }
+
+        Axios.get('api/comment/getComment', { params: variables })
+        .then(response => {
+            if(response.data.success) {
+                console.log(response.data.comments)
+                setCommentList(response.data.comments);
+            } else {
+                alert('comment를 를 가져오지 못했습니다.')
+            }
+        })
+    }, [])
 
     const onSubmit = (e) => {
         e.preventDefault(); // refresh 방지
