@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react'
-import {Button} from 'antd'
+import {Button, Input} from 'antd'
 import Axios from 'axios';
 import {useSelector} from 'react-redux';
+import SingleComment from './SingleComment';
 
 const Comment = ({selectedQuestion}) => {
     // debugger;
     // console.log(selectedQuestion);
+    const {TextArea} = Input
     const user = useSelector(state => state.user);
     const [commentValue, setCommentValue] = useState("");
     const [commentList, setCommentList] = useState([]);
@@ -32,6 +34,11 @@ const Comment = ({selectedQuestion}) => {
     const onSubmit = (e) => {
         e.preventDefault(); // refresh 방지
         debugger;
+
+        if(commentValue == "") {
+            alert("댓글을 작성해주세요.")
+        }
+
         const variables = {
             content: commentValue,
             writer: user.userData._id,
@@ -55,10 +62,12 @@ const Comment = ({selectedQuestion}) => {
 
             {/* Comment list */}
 
+            <SingleComment />
+
             {/* Root Comment List  */}
 
             <form style={{ display: 'flex'}} onSubmit={onSubmit}> 
-                <textarea
+                <TextArea
                     style={{width:"100%", borderRadius:"5px"}}
                     onChange={handleClick}
                     value={commentValue} 
