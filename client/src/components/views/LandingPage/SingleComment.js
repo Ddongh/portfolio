@@ -13,7 +13,7 @@ function SingleComment({refreshComment, comment, selectedQuestion}) {
         setOpenReply(!openReply);
     }
 
-    const onHandleChange = e => {
+    const onHandleChange = (e) => {
         setCommentValue(e.currentTarget.value)
     }
 
@@ -31,8 +31,9 @@ function SingleComment({refreshComment, comment, selectedQuestion}) {
         .then(response => {
             if(response.data.success) {
                 console.log(response.data.result)
-                refreshComment(response.data.result);
                 setCommentValue("");
+                setOpenReply(false);
+                refreshComment(response.data.result);
             } else {
                 alert('comment를 저장하지 못했습니다.')
             }

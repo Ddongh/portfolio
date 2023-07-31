@@ -12,7 +12,7 @@ const ReplyComment = ({refreshComment, selectedQuestion, parentCommentId, commen
             }
         })
         setChildCommentNumber(commentNumber);
-    }, [])
+    }, [commentList])
     
 
     const renderReplayComment = (parentCommentId) => {
@@ -24,7 +24,7 @@ const ReplyComment = ({refreshComment, selectedQuestion, parentCommentId, commen
                         comment.responseTo === parentCommentId &&
                         <div style={{ width:'80%', marginLeft: '40px'}} >
                             <SingleComment refreshComment={refreshComment} comment={comment} selectedQuestion={selectedQuestion} />
-                            <ReplyComment commentList={commentList} selectedQuestion={selectedQuestion} parentCommentId={parentCommentId} />
+                            <ReplyComment refreshComment={refreshComment} commentList={commentList} selectedQuestion={selectedQuestion} parentCommentId={comment._id} />
                         </div>
                     }
                 </React.Fragment>    

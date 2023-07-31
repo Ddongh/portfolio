@@ -15,7 +15,6 @@ const Comment = ({refreshComment, commentList, selectedQuestion}) => {
 
     const onSubmit = (e) => {
         e.preventDefault(); // refresh 방지
-        debugger;
 
         if(commentValue == "") {
             alert("댓글을 작성해주세요.")
@@ -31,8 +30,8 @@ const Comment = ({refreshComment, commentList, selectedQuestion}) => {
         .then(response => {
             if(response.data.success) {
                 console.log(response.data.result)
-                refreshComment(response.data.result);
                 setCommentValue("");
+                refreshComment(response.data.result);
             } else {
                 alert('comment를 저장하지 못했습니다.')
             }
