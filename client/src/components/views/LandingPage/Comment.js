@@ -3,33 +3,15 @@ import {Button, Input} from 'antd'
 import Axios from 'axios';
 import {useSelector} from 'react-redux';
 import SingleComment from './SingleComment';
+import ReplyComment from './ReplyComment';
 
-const Comment = ({selectedQuestion}) => {
-    // debugger;
-    // console.log(selectedQuestion);
+const Comment = ({refreshComment, commentList, selectedQuestion}) => {
     const {TextArea} = Input
     const user = useSelector(state => state.user);
     const [commentValue, setCommentValue] = useState("");
-    const [commentList, setCommentList] = useState([]);
     const handleClick = (e) => {
         setCommentValue(e.currentTarget.value);
     }
-
-    useEffect(() => {
-        const variables = {
-            questionId : selectedQuestion._id
-        }
-
-        Axios.get('api/comment/getComment', { params: variables })
-        .then(response => {
-            if(response.data.success) {
-                console.log(response.data.comments)
-                setCommentList(response.data.comments);
-            } else {
-                alert('comment를 를 가져오지 못했습니다.')
-            }
-        })
-    }, [])
 
     const onSubmit = (e) => {
         e.preventDefault(); // refresh 방지
@@ -49,6 +31,8 @@ const Comment = ({selectedQuestion}) => {
         .then(response => {
             if(response.data.success) {
                 console.log(response.data.result)
+                refreshComment(response.data.result);
+                setCommentValue("");
             } else {
                 alert('comment를 저장하지 못했습니다.')
             }
@@ -62,7 +46,15 @@ const Comment = ({selectedQuestion}) => {
 
             {/* Comment list */}
 
-            <SingleComment />
+            {commentList && commentList.map((comment, index) => (
+                (!comment.responseTo &&
+                    <React.Fragment>
+                        <SingleComment refreshComment={refreshComment} comment={comment} selectedQuestion={selectedQuestion} />
+                        <ReplyComment refreshComment={refreshComment} selectedQuestion={selectedQuestion} parentCommentId={comment._id} commentList={commentList} />
+                    </React.Fragment>
+                    )
+                
+            ))}  
 
             {/* Root Comment List  */}
 

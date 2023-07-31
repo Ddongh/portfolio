@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CandleStickChart from '../StockAnalyzePage/CandleStickChart';
 import { Button, message } from 'antd';
 import { EditorState, convertToRaw } from 'draft-js';
@@ -13,7 +13,7 @@ import Comment from './Comment';
 
 const QuestionDetail = ({ selectedQuestion }) => {
     const {stock, stockName, method, start, end, data, question, ai_answer, writer } = selectedQuestion;
-
+    const [commentList, setCommentList] = useState([]);
     const chartRef = useRef();
     const chartButton = useRef();
     const editorRef = useRef();
@@ -28,6 +28,29 @@ const QuestionDetail = ({ selectedQuestion }) => {
             setChartButtonState("차트 보기");
         }
     }
+
+    useEffect(() => {
+        const variables = {
+            questionId : selectedQuestion._id
+        }
+
+        Axios.get('api/comment/getComment', { params: variables })
+        .then(response => {
+            if(response.data.success) {
+                console.log(response.data.comments)
+                setCommentList(response.data.comments);
+            } else {
+                alert('comment를 를 가져오지 못했습니다.')
+            }
+        })
+    }, [])
+    
+    const refreshComment = (newComment) => {
+        setCommentList(commentList.concat(newComment))
+    }
+
+
+    
     
     return (
         <div style={{ width:"50%" }}>
@@ -81,7 +104,7 @@ const QuestionDetail = ({ selectedQuestion }) => {
                     </tr>
                 </tbody>
             </table>
-            <Comment selectedQuestion={selectedQuestion} />
+            <Comment refreshComment={refreshComment} commentList={commentList} selectedQuestion={selectedQuestion} />
             
         </div>
     );
