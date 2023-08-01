@@ -140,13 +140,6 @@ function AnalyzeForm(props) {
     updateState("end", e.target.value);
   }
 
-  const onChange = (value) => {
-    console.log(`selected ${value}`);
-  };
-  const onSearch = (value) => {
-    console.log('search:', value);
-  };
-
   return (
     <>
       <h2>종목 및 옵션 선택</h2>
@@ -157,7 +150,6 @@ function AnalyzeForm(props) {
             placeholder="Select a stock"
             optionFilterProp="children"
             onChange={onStockChange}
-            onSearch={onSearch}
             filterOption={(input, option) => { // SELECT BOX 필터링(검색기능)
               const nameB = (option?.props.label ?? '').toLowerCase().includes(input.toLowerCase()); // option의 label(주식명)에 input 데이터가 포함되는지 체크
               const codeB = (option?.props.value ?? '').toLowerCase().includes(input.toLowerCase()); // option의 value(주식코드)에 input 데이터가 포함되는지 체크

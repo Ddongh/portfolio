@@ -1,9 +1,9 @@
 import  React, { useState } from "react";
 import AnalyzeForm from "./AnalyzeForm";
-import CandleStickChart from "./CandleStickChart";
-import StockOpenAI from "./StockOpenAI";
-import StockQuestion from "./StockQuetion";
-import StockInfo from "./StockInfo";
+// import CandleStickChart from "./CandleStickChart";
+// import StockOpenAI from "./StockOpenAI";
+// import StockQuestion from "./StockQuetion";
+// import StockInfo from "./StockInfo";
 import AnalyzeResult from "./AnalyzeResult";
 
 function StockAnalyzePage(props) {
@@ -29,47 +29,15 @@ function StockAnalyzePage(props) {
     });
   };
 
-  if(state.data == "") { // 주식 분석 결과가 없으면 종목, 분석 방법 등을 선택하는 컴포넌트
-    return (
-      <div className="app">
-          <AnalyzeForm
-          state={state}
-          updateState={updateState}
-          />
-      </div>
-    );
-  } else { // 분석 결과값이 존재하면 
-    return (
-      <div className="app_l">
-        <AnalyzeResult 
-        state={state}
-        updateState={updateState}
-        />
-      </div>
-      
-      // <div className="app">
-      //   <h1>{state.stockName} 분석결과</h1>
-      //   <CandleStickChart // 분석 및 예측 결과 차트 컴포넌트
-      //   data={state.data.data} 
-      //   stockName={state.stockName}  
-      //   />
-        
-      //   <StockInfo state={state} // 주식 정보 테이블 컴포넌트
-      //   /> 
-
-      //   <StockOpenAI // openAI로 처리한 해당 종목의 최근 한달간 주식 동향 컴포넌트
-      //   stockName={state.stockName} 
-      //   ai_answer={state.ai_answer} 
-      //   />
-
-      //   <StockQuestion // 질문작성 및 등록 컴포넌트
-      //   state={state}
-      //   updateState={updateState}
-      //   />
-      // </div>
-      
-    )
-  }
+  return (
+    <div className={state.data === "" ? "app" : "app_l"}>
+      {state.data === "" ? ( // 서버로 받은 data가 없으면 AnalyzeForm, 있으면 AnalyzeResult 컴포넌트 렌더링
+        <AnalyzeForm state={state} updateState={updateState} />
+      ) : (
+        <AnalyzeResult state={state} />
+      )}
+    </div>
+  )
 };
 
 export default StockAnalyzePage

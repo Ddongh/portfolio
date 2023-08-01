@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CandleStickChart from './CandleStickChart';
 import { Button, message } from 'antd';
 import { EditorState, convertToRaw } from 'draft-js';
@@ -12,20 +12,23 @@ import { useRef } from 'react';
 
 const AnalyzeResult = (props) => {
     const {stock, stockName, method, start, end, data, answer, question, ai_answer} = props.state;
-    const updateState = props.updateState;
-    const user = useSelector(state => state.user);
+    // const updateState = props.updateState;
+    const user = useSelector(state => state.user); // 로그인 유저정보
 
-    const titleRef = useRef();
-    const titleInputRef = useRef();
-    const chartRef = useRef();
-    const chartButton = useRef();
-    const editorRef = useRef();
+    
+    const titleInputRef = useRef(); // 작성한 제목 text를 가져오기 위한 Ref
+    // const chartButton = useRef(); // 차트 숨김/보기 처리를 위한 Ref
+    const editorRef = useRef(); // 
     const saveButtonRef = useRef();
 
-    const [chartButtonState, setChartButtonState] = useState("차트 숨기기");
-    const [questionButtonDisplay, setQuestionButtonDisplay] = useState("block");
-    const [saveButtonState, setSaveButtonState] = useState("none");
-    const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const [chartButtonState, setChartButtonState] = useState("차트 숨기기"); // chart dialay button text
+    const [chartDisplayState, setChartDisplayState] = useState("block");    // chart display status
+    const [titleTrState, setTitleTrState] = useState("none");               // title tr display status
+    const [title, setTitle] = useState("");
+    const [questionButtonDisplay, setQuestionButtonDisplay] = useState("block"); // 질문하기 button status
+    const [saveButtonState, setSaveButtonState] = useState("none");         // 질문 저장 button status
+    const [editorDisplayState, setEditorDisplayState] = useState("none");   // editor display status
+    const [editorState, setEditorState] = useState(EditorState.createEmpty()); // editor text state
 
     const history = useHistory();
 
@@ -38,7 +41,7 @@ const AnalyzeResult = (props) => {
         
         const variable = {
             writer   : user.userData._id,       // 작성자
-            title    : titleInputRef.current.value,  // 제목
+            title    : title,                   // 제목
             stock    : stock,                   // 주식코드
             stockName: stockName,               // 주식이름
             method   : method,                  // 분석방법
@@ -67,30 +70,30 @@ const AnalyzeResult = (props) => {
     }
 
     const displayChart = () => { // 차트 숨김/보기 이벤트
-        if(chartRef.current.style.display == "none") {
-            chartRef.current.style.display = 'block';
-            setChartButtonState("차트 숨기기");   
-        } else {
-            chartRef.current.style.display = 'none';    
-            setChartButtonState("차트 보기");
-        }
+        chartDisplayState === "block" ? setChartDisplayState("none") : setChartDisplayState("block");
+        chartDisplayState === "block" ? setChartButtonState("차트 보기") : setChartButtonState("차트 숨기기");
     }
 
     const writeQuestion = () => { //질문하기 버튼 이벤트
-        titleRef.current.style.display = "" ; // 제목 작성 칸 보이기
-        editorRef.current.style.display = 'block'; // 에디터 보이기
+        setTitleTrState("");
+        setEditorDisplayState("block");
         setSaveButtonState("block"); // 저장하기 버튼 보이기
-        chartRef.current.style.display = 'none'; // 차트 숨기기    
+        setChartDisplayState("none");    
         setChartButtonState("차트 보기"); // 차트 버튼 text 변경
         setQuestionButtonDisplay("none"); // 질문하기 버튼 숨기기
     }
+
+    useEffect(() => {
+        if(titleTrState === "") titleInputRef.current.focus(); 
+    }, [titleTrState])
+    
 
     const validate = () => { // 제목 본문 작성 여부
         const contentState = editorState.getCurrentContent();
         const rawContentState = convertToRaw(contentState);
         const plainText = rawContentState.blocks[0].text; // 에디터에 작성한 텍스트 가져오기
 
-        if(titleInputRef.current.value == "") {
+        if(title == "") {
             alert("제목을 입력해주세요.");
             return false;
         } 
@@ -111,11 +114,11 @@ const AnalyzeResult = (props) => {
                 <Button style={{display:questionButtonDisplay, marginRight:'10px'}} type="primary" size="large" onClick={writeQuestion}>
                     질문하기 
                 </Button>
-                <Button ref={chartButton} style={{marginRight:'10px'}} type="primary" size="large" onClick={displayChart}> 
+                <Button  style={{marginRight:'10px'}} type="primary" size="large" onClick={displayChart}> 
                     {chartButtonState}
                 </Button>
             </div>
-            <div ref={chartRef} style={{display:"block"}}>
+            <div style={{display:chartDisplayState}}>
                 <CandleStickChart props={props.state} />
             </div>
             <table class="basicTable" style={{marginTop:"5%"}}>
@@ -126,7 +129,7 @@ const AnalyzeResult = (props) => {
                 <col width={"40%"} />
             </colgroup>
                 <tbody>
-                    <tr ref={titleRef} style={{display:"none"}}>
+                    <tr style={{display:titleTrState}}>
                         <th>제목</th>
                         <td colSpan={3}>
                             <input ref={titleInputRef} type='text' style={{width:"100%"}} />
@@ -156,7 +159,7 @@ const AnalyzeResult = (props) => {
                     </tr>
                 </tbody>
             </table>
-            <div ref={editorRef} style={{display:"none", border:"1px solid #dcdde1", height:"500px"}}>
+            <div style={{display:editorDisplayState, border:"1px solid #dcdde1", height:"500px"}}>
                 <Editor editorState={editorState} onEditorStateChange={setEditorState} />
             </div>
             

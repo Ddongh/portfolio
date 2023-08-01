@@ -44,7 +44,7 @@ def perform_rnn_analysis(code, method, start, end):
         model.compile(optimizer='adam', loss='mean_squared_error')
 
         # 모델 학습
-        model.fit(X_train.reshape(-1, 1, 1), y_train, epochs=10, batch_size=1, verbose=0)
+        model.fit(X_train.reshape(-1, 1, 1), y_train, epochs=1, batch_size=1, verbose=0)
 
         # 테스트 데이터에 대한 예측 수행
         y_pred = model.predict(X_test.reshape(-1, 1, 1))
