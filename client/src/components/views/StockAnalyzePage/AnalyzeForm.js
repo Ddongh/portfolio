@@ -25,9 +25,6 @@ function AnalyzeForm(props) {
 
   const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
 
-  const startRef = useRef("")
-  const endRef = useRef("")
-
   useEffect(() => {
     const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList")); // 로컬 스토리지에 저장된 주식 코드/이름 리스트 가져오기
     
@@ -157,7 +154,7 @@ function AnalyzeForm(props) {
               return codeB;
               }}
           >
-            {Object.keys(codeName).map((key, index) => (
+            {Object.keys(codeName).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
               <Option key={index} value={codeName[key].code} label={codeName[key].name}>
                 {codeName[key].name} ({codeName[key].code})
               </Option>
@@ -176,11 +173,11 @@ function AnalyzeForm(props) {
         </Form.Item>
 
         <Form.Item required label="시작일">
-          <Input ref={startRef} type="date" onChange={onStartChange}></Input>
+          <Input type="date" onChange={onStartChange}></Input>
         </Form.Item>
 
         <Form.Item required label="종료일">
-          <Input ref={endRef} type="date" onChange={onEndChange}></Input>
+          <Input type="date" onChange={onEndChange}></Input>
         </Form.Item>
 
         <Button type='primary' size="large" onClick={handleSubmit}>

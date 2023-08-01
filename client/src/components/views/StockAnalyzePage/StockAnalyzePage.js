@@ -1,22 +1,18 @@
-import  React, { useState } from "react";
+import React, { useState } from "react";
 import AnalyzeForm from "./AnalyzeForm";
-// import CandleStickChart from "./CandleStickChart";
-// import StockOpenAI from "./StockOpenAI";
-// import StockQuestion from "./StockQuetion";
-// import StockInfo from "./StockInfo";
 import AnalyzeResult from "./AnalyzeResult";
 
 function StockAnalyzePage(props) {
 
   const [state, setState] = useState({ // state 생성
-    stock: '', // 종목코드
-    stockName: '', // 종목명
-    method: '', // 분석방법
-    start: '', // 분석 시작일
-    end: '', // 분석종료일
-    data: '', // 크롤링 및 예측 주가 데이터
+    stock: '',                    // 종목코드
+    stockName: '',                // 종목명
+    method: '',                   // 분석방법
+    start: '',                    // 분석 시작일
+    end: '',                      // 분석종료일
+    data: '',                     // 크롤링 및 예측 주가 데이터
     ai_answer: "....Loading....", // 해당 종목의 한달간 동향(openAI)
-    question: '', // 사용자가 작성한 질문
+    question: '',                 // 사용자가 작성한 질문
   });
   
   const updateState = (key, value, callback) => { // state 업데이트 함수
