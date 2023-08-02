@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'antd';
+import { Button, Table, Pagination } from 'antd';
 import Axios from 'axios';
 import { format } from 'date-fns';
 
@@ -14,50 +14,54 @@ const QuestionList = ({ setSelectedQuestion }) => {
         setSelectedQuestion(record);
     }
     useEffect(() => { // 페이지 접근시 전제 질문 개수 가져오기
-      Axios.get('/api/landing/total')
-      .then(response => {
-        setTotalCount(response.data.totalCount) // 전제질문 개수 state update
-      })
-      .catch(error => {
-          console.error('Error fetching data:', error);
-      });
+		Axios.get('/api/landing/total')
+			.then(response => {
+				setTotalCount(response.data.totalCount) // 전제질문 개수 state update
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+			});
     }, [])
 
     useEffect(() => { // 페이지 변경시 해당하는 문서 가져오기
-      const variable = { 
-        page: currentPage,             // 현재 페이지 번호
-        perPage: questionsPerPage,     // 페이지당 표시될 질문 개수
+		const variable = { 
+			page: currentPage,             // 현재 페이지 번호
+			perPage: questionsPerPage,     // 페이지당 표시될 질문 개수
       };
 
-      Axios.get('/api/landing', { params: variable }) // 해당문서 가져오기
-      .then(response => {
-          // let questions = response.data.questions;
-          setQuestions(response.data.questions); // 질문목록 state update
-      })
-      .catch(error => {
-          console.error('Error : ', error);
-      });
+		Axios.get('/api/landing', { params: variable }) // 해당문서 가져오기
+			.then(response => {
+				// let questions = response.data.questions;
+				setQuestions(response.data.questions); // 질문목록 state update
+			})
+			.catch(error => {
+				console.error('Error : ', error);
+			});
     }, [currentPage]);
 
     const handlePageChange = (pageNumber) => { // 페이지 변경 이벤트 핸들러
-      setCurrentPage(pageNumber); // 페이지 번호 update
+      	setCurrentPage(pageNumber); // 페이지 번호 update
     };
+
+    const onPageChange = (pageNumber) => {
+      	setCurrentPage(pageNumber);
+    }
 
     const columns = [
         {
-          title: '제목',
-          dataIndex: 'title',
-          key: 'title',
+			title: '제목',
+			dataIndex: 'title',
+			key: 'title',
         },
         {
-          title: '주식명',
-          dataIndex: 'stockName',
-          key: 'stockName',
+			title: '주식명',
+			dataIndex: 'stockName',
+			key: 'stockName',
         },
         {
-          title: '분석방법',
-          dataIndex: 'method',
-          key: 'method',
+			title: '분석방법',
+			dataIndex: 'method',
+			key: 'method',
         },
         {
             title: '작성자',
@@ -70,40 +74,40 @@ const QuestionList = ({ setSelectedQuestion }) => {
             }
         },
         {
-          title: '작성일',
-          dataIndex: 'createdAt',
-          key: 'createdAt',
-          render: (createdAt) => { // 날짜 데이터 변환(년월일)
-            if (!createdAt) return null; // createdAt 값이 없을 경우 null 반환
-            const ymd = createdAt.split("T")[0];
-            const hms = createdAt.split("T")[1].split(".")[0];
-            const timeData = ymd + " " + hms;
-            return (
-                timeData
-            );
-          }
+			title: '작성일',
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			render: (createdAt) => { // 날짜 데이터 변환(년월일)
+				if (!createdAt) return null; // createdAt 값이 없을 경우 null 반환
+					const ymd = createdAt.split("T")[0];
+					const hms = createdAt.split("T")[1].split(".")[0];
+					const timeData = ymd + " " + hms;
+					return (
+						timeData
+				);
+			}
         },
       ];
 
     return (
         <div className="app">
-          <h2>질문 목록</h2>
-          <Table 
-          style={{width:"50%"}} 
-          dataSource={questions} 
-          columns={columns} 
-          pagination={{
-              total: totalCount, // 전체 데이터 개수 설정
-              pageSize: questionsPerPage, // 한 페이지당 표시할 데이터 개수 설정
-              onChange: handlePageChange, // 페이지 변경 이벤트 핸들러 설정
-            }}
-          rowClassName={() => 'custom-row-style'}
-          onRow={(record, rowIndex) => {
-            return {
-              onClick: () => onRowSelect(record, rowIndex), // 각 행을 클릭했을 때 이벤트 처리
-            };
-          }}
-          />
+			<h2>질문 목록</h2>
+			<Table 
+			style={{width:"50%"}} 
+			dataSource={questions} 
+			columns={columns} 
+			pagination={false}
+			rowClassName={() => 'custom-row-style'}
+			onRow={(record, rowIndex) => {
+				return {
+					onClick: () => onRowSelect(record, rowIndex), // 각 행을 클릭했을 때 이벤트 처리
+				};
+			}}
+			/>
+			<div style={{marginTop:"20px"}}>
+				<Pagination defaultCurrent={1} current={currentPage} total={totalCount} onChange={onPageChange} />
+			</div>
+			
         </div>
     );
 }

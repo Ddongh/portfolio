@@ -62,43 +62,40 @@ router.post('/stockAnalyze/rnn', (req, res) => {
   console.log("#### req.body #### ");
   console.log(req.body);
 
-  const code = req.body.code;
-  const method = req.body.method;
-  const start = req.body.start;
-  const end = req.body.end;
+  const code = req.body.code;     // 종목코드
+  const method = req.body.method; // 분석방법
+  const start = req.body.start;   // 분석 시작일
+  const end = req.body.end;       // 분석 종료일
 
   console.log("순환신경망 파이썬 파일 실행 시작");
-  const pythonProcess = spawn('python3', ['server/pythons/rnn.py', code, method, start, end]);
+  const pythonProcess = spawn('python3', ['server/pythons/rnn.py', code, method, start, end]); // 파이썬파일에 parameter 전달 및 실행
 
   let output = '';
   let tmp = "";
 
-  pythonProcess.stdout.on('data', (data) => {
+  pythonProcess.stdout.on('data', (data) => { // 데이터 변환
     output += data.toString();
     // console.log(output)
   });
 
-  pythonProcess.on('close', (code) => {
+  pythonProcess.on('close', (code) => { // 파이썬 파일 실행 종료 시 예외 처리 및 변환 후 클라이언트에 전달
     console.log("순환신경망 파이썬 파일 실행 종료");
     console.log("Exit code: " + code);
     console.log("######output start ######")
-    console.log(output.indexOf("Failed download"));
+    console.log(output.indexOf("Failed download")); // 해당 기간동안 데이터가 수집되지 않으면 출력되는 error 코드
     if(output.indexOf("Failed download") > -1) {
-      // res.json({"data" : output});
       res.status(500).json({ error: output });
       return
     }
     console.log("######output end ######")
-    // let tmp = output.split("^")
     console.log("####################################");
     console.log(output.split("^")[1]);
     console.log("####################################");
-    tmp = output.split("^")[1];
-    tmp = JSON.parse(tmp)
+    tmp = output.split("^")[1]; // 필요 데이터 추출
+    tmp = JSON.parse(tmp)       // json으로 변환
 
     res.json(tmp); // JSON 데이터를 클라이언트에 전달
   });
 });
-
 
 module.exports = router;
