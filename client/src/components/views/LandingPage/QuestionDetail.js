@@ -10,14 +10,16 @@ import { useHistory } from 'react-router-dom';
 import ReactHtmlParser from 'react-html-parser';
 import { useRef } from 'react';
 import Comment from './Comment';
+import { updateLocale } from "moment";
+// import ReactHtmlParser from 'react-html-parser';
 
 const QuestionDetail = ({ selectedQuestion }) => {
-    const {stock, stockName, method, start, end, data, question, ai_answer, writer } = selectedQuestion;
+    const {stock, stockName, method, start, end, data, question, ai_answer, writer, title } = selectedQuestion;
     const [commentList, setCommentList] = useState([]);
     const chartRef = useRef();
     const chartButton = useRef();
-    const editorRef = useRef();
-    const [chartButtonState, setChartButtonState] = useState("차트 숨기기");
+    
+    const [chartButtonState, setChartButtonState] = useState("차트 숨기기"); // 차트 보이기/숨김 버튼 text state
 
     const displayChart = () => { // 차트 숨김/보기 이벤트
         if(chartRef.current.style.display == "none") {
@@ -29,7 +31,7 @@ const QuestionDetail = ({ selectedQuestion }) => {
         }
     }
 
-    useEffect(() => {
+    useEffect(() => { // 질문에 해당하는 모든 comment 가져오기
         const variables = {
             questionId : selectedQuestion._id
         }
@@ -37,20 +39,16 @@ const QuestionDetail = ({ selectedQuestion }) => {
         Axios.get('api/comment/getComment', { params: variables })
         .then(response => {
             if(response.data.success) {
-                console.log(response.data.comments)
-                setCommentList(response.data.comments);
+                setCommentList(response.data.comments); // commentList update
             } else {
                 alert('comment를 를 가져오지 못했습니다.')
             }
         })
     }, [])
     
-    const refreshComment = (newComment) => {
-        setCommentList(commentList.concat(newComment))
+    const refreshComment = (newComment) => { // 댓글 등록 후 refresh function
+        setCommentList(commentList.concat(newComment)) // 작성한 질문을 state에 추가
     }
-
-
-    
     
     return (
         <div style={{ width:"50%" }}>
@@ -73,7 +71,7 @@ const QuestionDetail = ({ selectedQuestion }) => {
                     <tr>
                         <th>제목</th>
                         <td colSpan={3}>
-                            { question }
+                            { title }
                         </td>
                     </tr>
                     <tr>
@@ -100,12 +98,11 @@ const QuestionDetail = ({ selectedQuestion }) => {
                     </tr>
                     <tr>
                         <th>질문</th>
-                        <td style={{verticalAlign:"top", height: "300px"}} colspan="3">{ question }</td>
+                        <td style={{verticalAlign:"top", height: "300px"}} colspan="3">{ ReactHtmlParser(question) }</td>
                     </tr>
                 </tbody>
             </table>
             <Comment refreshComment={refreshComment} commentList={commentList} selectedQuestion={selectedQuestion} />
-            
         </div>
     );
 }

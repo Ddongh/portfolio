@@ -12,32 +12,28 @@ import { useRef } from 'react';
 
 const AnalyzeResult = (props) => {
     const {stock, stockName, method, start, end, data, answer, question, ai_answer} = props.state;
-    // const updateState = props.updateState;
     const user = useSelector(state => state.user); // 로그인 유저정보
 
-    
-    const titleInputRef = useRef(); // 작성한 제목 text를 가져오기 위한 Ref
-    // const chartButton = useRef(); // 차트 숨김/보기 처리를 위한 Ref
-    const editorRef = useRef(); // 
-    const saveButtonRef = useRef();
+    const titleInputRef = useRef(); // 제목 focus 를 위한 Ref
 
-    const [chartButtonState, setChartButtonState] = useState("차트 숨기기"); // chart dialay button text
-    const [chartDisplayState, setChartDisplayState] = useState("block");    // chart display status
-    const [titleTrState, setTitleTrState] = useState("none");               // title tr display status
-    const [title, setTitle] = useState("");
-    const [questionButtonDisplay, setQuestionButtonDisplay] = useState("block"); // 질문하기 button status
-    const [saveButtonState, setSaveButtonState] = useState("none");         // 질문 저장 button status
-    const [editorDisplayState, setEditorDisplayState] = useState("none");   // editor display status
-    const [editorState, setEditorState] = useState(EditorState.createEmpty()); // editor text state
+    const [chartButtonState, setChartButtonState] = useState("차트 숨기기");         // chart dialay button text
+    const [chartDisplayState, setChartDisplayState] = useState("block");            // chart display status
+    const [titleTrState, setTitleTrState] = useState("none");                       // title tr display status
+    const [title, setTitle] = useState("");                                         // question title
+    const [questionButtonDisplay, setQuestionButtonDisplay] = useState("block");    // 질문하기 button status
+    const [saveButtonState, setSaveButtonState] = useState("none");                 // 질문 저장 button status
+    const [editorDisplayState, setEditorDisplayState] = useState("none");           // editor display status
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());      // editor text state
 
     const history = useHistory();
 
     const saveQuestion = () => { // 질문 저장 
-        if(!validate()) return // 제목 본문 작성 여부
-        
+
         const contentState = editorState.getCurrentContent();
-        const rawContentState = convertToRaw(contentState);
-        const text = rawContentState.blocks[0].text; // 에디터에 작성한 텍스트 가져오기
+        const rawContentState = convertToRaw(contentState);    
+        const text = rawContentState.blocks.reduce((a, b) => a + (b.text + "<br>"), "") // text editor 내용 가져오기, 줄바꿈처리
+
+        if(!validate(text)) return // 제목 본문 작성 여부 체크
         
         const variable = {
             writer   : user.userData._id,       // 작성자
@@ -48,21 +44,17 @@ const AnalyzeResult = (props) => {
             start    : start,                   // 분석 시작일
             end      : end,                     // 분석 종료일
             data     : data,                    // 크롤링 및 예측 데이터
-            ai_answer   : ai_answer,               // 한달간 동향(openai 답변)
+            ai_answer   : ai_answer,            // 한달간 동향(openai 답변)
             question : text,                    // 작성한 질문
         }
         
         Axios.post('/api/stock/stockAnalyze/question', variable)
             .then(response => {
                 if(response.data.success) {
-                    //console.log(response.data)
                     message.success('성공적으로 게시했습니다.')
-                    setTimeout(() => {
-                        // props.history.push('/')
-                        history.push('/');
-                        
+                    setTimeout(() => { // 3초뒤
+                        history.push('/'); // 메인화면으로 이동
                     }, 3000)
-                       
                 } else {
                     alert('게시에 실패했습니다.')
                 }
@@ -75,40 +67,39 @@ const AnalyzeResult = (props) => {
     }
 
     const writeQuestion = () => { //질문하기 버튼 이벤트
-        setTitleTrState("");
-        setEditorDisplayState("block");
-        setSaveButtonState("block"); // 저장하기 버튼 보이기
-        setChartDisplayState("none");    
-        setChartButtonState("차트 보기"); // 차트 버튼 text 변경
-        setQuestionButtonDisplay("none"); // 질문하기 버튼 숨기기
+        setTitleTrState("");                // 제목작성 tr 보이기
+        setEditorDisplayState("block");     // 텍스트 에디터 보이기
+        setSaveButtonState("block");        // 저장하기 버튼 보이기
+        setChartDisplayState("none");       // 차트 숨기기    
+        setChartButtonState("차트 보기");    // 차트 display 버튼 text 변경
+        setQuestionButtonDisplay("none");   // 질문하기 버튼 숨기기
     }
 
-    useEffect(() => {
+    useEffect(() => { // 제목작성 tr이 보이면 focus 이동
         if(titleTrState === "") titleInputRef.current.focus(); 
     }, [titleTrState])
     
 
-    const validate = () => { // 제목 본문 작성 여부
-        const contentState = editorState.getCurrentContent();
-        const rawContentState = convertToRaw(contentState);
-        const plainText = rawContentState.blocks[0].text; // 에디터에 작성한 텍스트 가져오기
-
+    const validate = (text) => { // 제목 본문 작성 여부 체크 함수
         if(title == "") {
             alert("제목을 입력해주세요.");
             return false;
         } 
-        if(plainText == "") {
+        if(text == "") {
             alert("본문을 작성해주시기 바랍니다.")
             return false;
         }
         return true;
     }
+
+    const onTitleChange = (e) => { // 제목 작성시 state update
+        setTitle(e.currentTarget.value);
+    }
     
     return (
-        
         <div style={{ width:"50%" }}>
             <div style={{ marginTop: "10%", display: 'flex', justifyContent: 'flex-end' }}>
-                <Button ref={saveButtonRef} style={{display:saveButtonState, marginRight:'10px'}} type="primary" size="large" onClick={saveQuestion}> 
+                <Button style={{display:saveButtonState, marginRight:'10px'}} type="primary" size="large" onClick={saveQuestion}> 
                     등록하기
                 </Button>
                 <Button style={{display:questionButtonDisplay, marginRight:'10px'}} type="primary" size="large" onClick={writeQuestion}>
@@ -132,7 +123,7 @@ const AnalyzeResult = (props) => {
                     <tr style={{display:titleTrState}}>
                         <th>제목</th>
                         <td colSpan={3}>
-                            <input ref={titleInputRef} type='text' style={{width:"100%"}} />
+                            <input ref={titleInputRef} type='text' value={title} style={{width:"100%"}} onChange={onTitleChange} />
                         </td>
                     </tr>
                     <tr>

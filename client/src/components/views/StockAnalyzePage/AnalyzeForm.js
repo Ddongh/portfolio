@@ -108,8 +108,8 @@ function AnalyzeForm(props) {
         });
       });
     
-    let tmp = "최근 한달간 " + stockName + "의 동향을 분석해서 요약해줘.";
-    
+    let tmp = "최근 한달간 " + stockName + "의 동향을 분석해서 요약해줘. ";
+    tmp += "줄바꿈 및 문단구분을 위해 적절히 <br> 태그를 넣어줘";
     Axios.post('/api/chatgpt', { question:tmp }) // 선택한 종목에 대한 한달간 동향 파악 라우터실행(openAI)
     .then(response => {
       const answer = response.data.answer; 

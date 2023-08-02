@@ -7,16 +7,17 @@ import ReplyComment from './ReplyComment';
 
 const Comment = ({refreshComment, commentList, selectedQuestion}) => {
     const {TextArea} = Input
-    const user = useSelector(state => state.user);
-    const [commentValue, setCommentValue] = useState("");
-    const handleClick = (e) => {
+    const user = useSelector(state => state.user); // 사용자 정보
+    const [commentValue, setCommentValue] = useState(""); // 작성한 comment text
+
+    const handleChange = (e) => { // 댓글 작성시 commentValue update
         setCommentValue(e.currentTarget.value);
     }
 
-    const onSubmit = (e) => {
+    const onSubmit = (e) => { // 댓글 등록 이벤트
         e.preventDefault(); // refresh 방지
 
-        if(commentValue == "") {
+        if(commentValue == "") { // 
             alert("댓글을 작성해주세요.")
         }
 
@@ -26,12 +27,11 @@ const Comment = ({refreshComment, commentList, selectedQuestion}) => {
             questionId: selectedQuestion._id,
         };
 
-        Axios.post('api/comment/saveComment', variables)
+        Axios.post('api/comment/saveComment', variables) // 댓글등록 요청
         .then(response => {
             if(response.data.success) {
-                console.log(response.data.result)
-                setCommentValue("");
-                refreshComment(response.data.result);
+                setCommentValue(""); // 작성한 댓글 초기화
+                refreshComment(response.data.result); // 저장한 댓글을 댓글 목록에 추가
             } else {
                 alert('comment를 저장하지 못했습니다.')
             }
@@ -42,31 +42,27 @@ const Comment = ({refreshComment, commentList, selectedQuestion}) => {
         <div>
             <br />
             <p> Replies </p>
-
-            {/* Comment list */}
-
-            {commentList && commentList.map((comment, index) => (
-                (!comment.responseTo &&
+            {commentList && commentList.map((comment, index) => ( // 댓글 목록이 존재하면
+                (!comment.responseTo && // 최상위 댓글만 렌더링(대댓글이 아닌것)
                     <React.Fragment>
                         <SingleComment refreshComment={refreshComment} comment={comment} selectedQuestion={selectedQuestion} />
+                        {/* 댓글표시 */}
                         <ReplyComment refreshComment={refreshComment} selectedQuestion={selectedQuestion} parentCommentId={comment._id} commentList={commentList} />
+                        {/* 대댓글 표시 및 대댓글 작성 컴포넌트 */}
                     </React.Fragment>
                     )
                 
             ))}  
 
-            {/* Root Comment List  */}
-
-            <form style={{ display: 'flex'}} onSubmit={onSubmit}> 
+            <form style={{ display: 'flex'}} onSubmit={onSubmit}> {/*  최상위 댓글 작성 영역 */}
                 <TextArea
                     style={{width:"100%", borderRadius:"5px"}}
-                    onChange={handleClick}
+                    onChange={handleChange}
                     value={commentValue} 
                     placeholder='댓글을 작성해 주세요.'
                 />
                 <br />
                 <Button type='primary' size="large" style={{ width:"20%", height:"50px"}} onClick={onSubmit}>등록</Button>
-                
             </form>
         </div>
     )
