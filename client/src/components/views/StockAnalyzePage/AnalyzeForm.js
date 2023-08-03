@@ -25,30 +25,54 @@ function AnalyzeForm(props) {
 
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
 
+	const [totalOption, setsotalOption] = useState(0);
+
 	useEffect(() => {
-		const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList")); // 로컬 스토리지에 저장된 주식 코드/이름 리스트 가져오기
+
+		const variable = { 
+			start: 0,             // 현재 페이지 번호
+			end: 10,     // 페이지당 표시될 질문 개수
+      	};
+
+		Axios.get('/api/stock/stockCodeName', { params: variable }) 
+			.then(response => {
+				if(response.data.success) {
+					setCodeName(response.data.codeNames) // state update
+				} else {
+					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
+				}
+			})
+			.catch(error => {
+				console.error(error);
+			});
 		
-		if(localCodeNameList == null || localCodeNameList.expire < Date.now()) { // 로컬스토리지에 저장여부 확인 및 만료일자 체크
-			const s = performance.now(); 
-			Axios.get('/api/stock/stockCodeName') 
-				.then(response => {
-					setCodeName(response.data) // state update
-					localStorage.removeItem("codeNameList") // 로컬스토리지 데이터 삭제
-					response.data["expire"] = Date.now() + 60 * 60 * 24 * 1000; // 만료일자 지정(초*분*시*1000)
-					localStorage.setItem("codeNameList", JSON.stringify(response.data)); // 로컬스토리지에 저장
-					const e = performance.now();
-					console.log("서버요청 소요 시간(ms) : ", e-s);
-				})
-				.catch(error => {
-					console.error(error);
-				});
-		} else { // 로컬스토리지에 데이터가 있고 만료일이 지나지 않으면 그대로 사용
-			const s = performance.now();
-			setCodeName(localCodeNameList); // state update
-			const e = performance.now()
-			console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
-		}
 	}, [])
+	
+
+	// useEffect(() => {
+	// 	const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList")); // 로컬 스토리지에 저장된 주식 코드/이름 리스트 가져오기
+		
+	// 	if(localCodeNameList == null || localCodeNameList.expire < Date.now()) { // 로컬스토리지에 저장여부 확인 및 만료일자 체크
+	// 		const s = performance.now(); 
+	// 		Axios.get('/api/stock/stockCodeName') 
+	// 			.then(response => {
+	// 				setCodeName(response.data) // state update
+	// 				localStorage.removeItem("codeNameList") // 로컬스토리지 데이터 삭제
+	// 				response.data["expire"] = Date.now() + 60 * 60 * 24 * 1000; // 만료일자 지정(초*분*시*1000)
+	// 				localStorage.setItem("codeNameList", JSON.stringify(response.data)); // 로컬스토리지에 저장
+	// 				const e = performance.now();
+	// 				console.log("서버요청 소요 시간(ms) : ", e-s);
+	// 			})
+	// 			.catch(error => {
+	// 				console.error(error);
+	// 			});
+	// 	} else { // 로컬스토리지에 데이터가 있고 만료일이 지나지 않으면 그대로 사용
+	// 		const s = performance.now();
+	// 		setCodeName(localCodeNameList); // state update
+	// 		const e = performance.now()
+	// 		console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
+	// 	}
+	// }, [])
 	
 	const validate = () => { // validation check
 

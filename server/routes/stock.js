@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
 const { Stock } = require("../models/Stock");
+const { StockCodeName} = require("../models/StockCodeName")
 const iconv = require('iconv-lite');
 const os = require('os');
 
@@ -12,6 +13,57 @@ router.get('/stockAnalyze', (req, res) => {
 		message: 'stockAnalyze hello'
 	};
 	res.json(responseData);
+});
+
+router.get('/stockCodeNameUpdate', (req, res) => { // 종목 코드/이름 리스트 update
+  
+	console.log("##### 주식 코드/이름 업데이트 라우터 START #####");
+	const platform = os.platform();
+
+	console.log("##### 주식 코드/이름 크롤링 파이썬 파일 실행 START #####");
+	const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']); // 크롤링 파이썬 파일 실행
+
+	let output = '';
+	
+	pythonProcess.stdout.on('data', (data) => { // 파이썬 파일 실행결과 변환
+		if (platform === 'win32') {         // 윈도우 환경이면
+			output += iconv.decode(data, 'euc-kr'); // 윈도우 환경에서 한글깨짐(디코딩)
+			console.log("platform >>>> ", platform);
+		} else if (platform === 'darwin') { // 맥 환경이면
+			output += data;
+			console.log("platform >>>> ", platform);
+		} else {                            // 기타환경이면
+			console.log('현재 환경은 기타 운영체제입니다.');
+		}
+  });
+
+	pythonProcess.on('close', (code) => { // 파이썬 파일 종료 시 
+			console.log("%%%%% output %%%%%");
+			const parsedOutput = JSON.parse(output); // JSON 데이터로 파싱
+			console.log(parsedOutput[0]);
+			console.log(parsedOutput[0].code)
+			console.log(parsedOutput[0].name)
+			console.log(typeof(parsedOutput))
+
+			// StockCodeName 스키마로 저장된 모든 데이터 삭제
+			StockCodeName.deleteMany({}, (err) => {
+				if (err) {
+				console.log('Error occurred while deleting data:', err);
+				return;
+				}
+				console.log('All data in StockCodeName collection has been deleted.');
+			});
+
+			const stockCodeNameData = Object.values(parsedOutput).map(item => ({ code: item.code, name: item.name }));
+
+			StockCodeName.insertMany(stockCodeNameData, (err, docs) => { // MongoDB에 데이터를 배열 형태로 저장
+				if (err) { // 에러 처리
+					console.log(err);
+					return res.json({ success: false, err });
+				}
+				return res.status(200).json({ success: true }); // 성공시 클라이언트에 200코드와 success true 전달
+			});
+	});
 });
 
 router.post('/stockAnalyze/question', (req, res) => { // 질문 저장 라우터
@@ -28,32 +80,51 @@ router.post('/stockAnalyze/question', (req, res) => { // 질문 저장 라우터
 })
 
 router.get('/stockCodeName', (req, res) => { // 종목 코드/이름 리스트 크롤링 라우터
-  
-	console.log("##### 주식 코드/이름 크롤링 라우터 START #####");
-	const platform = os.platform();
+	const start  = parseInt(req.query.start); // 조회할 코드/이름 정보 start index 
+    const end = parseInt(req.query.end); 	  // 조회할 코드/이름 정보 end index 
+    console.log("Landing Page Router Start!!!!!");
+    console.log("start: ", start); 
+    console.log("end : ", end); 
 
-	console.log("##### 주식 코드/이름 크롤링 파이썬 파일 실행 START #####");
-	const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']); // 크롤링 파이썬 파일 실행
+    // 페이지네이션 처리를 위해 skip 값과 limit 값 계산
 
-	let output = '';
-	
-	pythonProcess.stdout.on('data', (data) => { // 파이썬 파일 실행결과 변환
-		
-		if (platform === 'win32') {         // 윈도우 환경이면
-			output += iconv.decode(data, 'euc-kr'); // 윈도우 환경에서 한글깨짐(디코딩)
-			console.log("platform >>>> ", platform);
-		} else if (platform === 'darwin') { // 맥 환경이면
-			output += data;
-			console.log("platform >>>> ", platform);
-		} else {                            // 기타환경이면
-			console.log('현재 환경은 기타 운영체제입니다.');
-		}
-  });
-
-  pythonProcess.on('close', (code) => { // 파이썬 파일 종료 시 
-    	res.json(JSON.parse(output));       // 크롤링 데이터 클라이언트에 전달
-  });
+    StockCodeName.find()
+        .sort({ name: 1 }) // 이름 기준으로 오름차순 정렬
+        .skip(start)
+        .limit(end)
+        .exec((err, codeNames) => {
+            if(err) return res.status(400).send(err);
+            res.status(200).json({ success: true, codeNames});
+        })
 });
+
+// router.get('/stockCodeName', (req, res) => { // 종목 코드/이름 리스트 크롤링 라우터
+  
+// 	console.log("##### 주식 코드/이름 크롤링 라우터 START #####");
+// 	const platform = os.platform();
+
+// 	console.log("##### 주식 코드/이름 크롤링 파이썬 파일 실행 START #####");
+// 	const pythonProcess = spawn('python3', ['server/pythons/stockCodeName.py']); // 크롤링 파이썬 파일 실행
+
+// 	let output = '';
+	
+// 	pythonProcess.stdout.on('data', (data) => { // 파이썬 파일 실행결과 변환
+		
+// 		if (platform === 'win32') {         // 윈도우 환경이면
+// 			output += iconv.decode(data, 'euc-kr'); // 윈도우 환경에서 한글깨짐(디코딩)
+// 			console.log("platform >>>> ", platform);
+// 		} else if (platform === 'darwin') { // 맥 환경이면
+// 			output += data;
+// 			console.log("platform >>>> ", platform);
+// 		} else {                            // 기타환경이면
+// 			console.log('현재 환경은 기타 운영체제입니다.');
+// 		}
+//   });
+
+//   pythonProcess.on('close', (code) => { // 파이썬 파일 종료 시 
+//     	res.json(JSON.parse(output));       // 크롤링 데이터 클라이언트에 전달
+//   });
+// });
 
 
 router.post('/stockAnalyze/rnn', (req, res) => { // 순환신경망 분석 및 예측 라우터

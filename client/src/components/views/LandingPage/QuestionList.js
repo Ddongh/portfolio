@@ -47,6 +47,20 @@ const QuestionList = ({ setSelectedQuestion }) => {
       	setCurrentPage(pageNumber);
     }
 
+	const stockCodeNameUpdate = () => {
+		Axios.get('/api/stock/stockCodeNameUpdate') 
+			.then(response => {
+				if(response.data.success) {
+					console.log("update 완료");
+				} else {
+					console.log("update error");
+				}
+			})
+			.catch(error => {
+				console.error(error);
+			});
+	}
+
     const columns = [
         {
 			title: '제목',
@@ -91,6 +105,9 @@ const QuestionList = ({ setSelectedQuestion }) => {
 
     return (
         <div className="app">
+			<Button type='primary' size="large" onClick={stockCodeNameUpdate} >
+				종목 UPDATE
+			</Button>
 			<h2>질문 목록</h2>
 			<Table 
 			style={{width:"50%"}} 
