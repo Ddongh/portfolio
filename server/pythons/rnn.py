@@ -8,27 +8,27 @@ from tensorflow.keras.layers import Dense, SimpleRNN
 import sys
 
 def perform_rnn_analysis(code, method, start, end):
-    symbol = code + ".KS"
+    symbol = code + ".KS" # 종목 코드
     
-    df = yf.download(symbol, start=start, end=end, progress=False)
+    df = yf.download(symbol, start=start, end=end, progress=False) # 코드, 기간에 해당하는 주가정보 크롤링
 
-    output_data = {}
-    pred = {}
+    output_data = {} # node 서버로 전달할 데이터
+    pred = {}        # 예측 데이터
 
     ###############################################################
     ####################순환신경망 분석 코드 시작 ###################
     ###############################################################
-    for column in df.columns :
-        # 데이터 추출
-        data = df[column].values.reshape(-1, 1)
+
+    for column in df.columns : 
+        data = df[column].values.reshape(-1, 1) # 2차원으로 변환
 
         # 데이터 정규화 (0 ~ 1 사이 값으로 스케일 조정)
         scaler = MinMaxScaler()
         data_scaled = scaler.fit_transform(data)
 
         # 학습 데이터와 타겟 데이터 생성
-        X = data_scaled[:-1]  # 입력 시퀀스
-        y = data_scaled[1:]  # 출력 시퀀스
+        X = data_scaled[:-1]  # 입력 시퀀스 (마지막 데이터 제외)
+        y = data_scaled[1:]   # 출력 시퀀스 (첫번째 데이터 제외)
 
         # 데이터셋 분리 (학습용 데이터와 테스트용 데이터)
         train_size = int(len(X) * 0.8)  # 전체 데이터의 80%를 학습용 데이터로 사용
@@ -37,8 +37,8 @@ def perform_rnn_analysis(code, method, start, end):
 
         # 순환신경망 모델 생성
         model = Sequential()
-        model.add(SimpleRNN(units=32, input_shape=(1, 1)))
-        model.add(Dense(units=1))
+        model.add(SimpleRNN(units=32, input_shape=(1, 1))) # 뉴런(unit) 수를 32로 설정, 입력데이터 형태 설정
+        model.add(Dense(units=1)) # Dense 층의 뉴런(unit) 수를 1로 설정(단일예측값)
 
         # 모델 컴파일
         model.compile(optimizer='adam', loss='mean_squared_error')
@@ -84,10 +84,10 @@ def perform_rnn_analysis(code, method, start, end):
     # 날짜와 각 열을 리스트로 변환
     date_data = df.index.strftime('%Y-%m-%d').tolist()  # 날짜 데이터를 년월일 형식의 문자열로 변환하여 리스트로 저장
 
-    output_data["data"] = []
-    for index, row in df.iterrows():
+    output_data["data"] = [] # 크롤링데이터 담기
+    for index, row in df.iterrows(): # 클롱링 및 예측값을 딕셔너리에 담기
         data = {
-            "date": index.strftime("%Y-%m-%d"),  # Convert date to string format
+            "date": index.strftime("%Y-%m-%d"),  # 날짜 데이터를 문자열 변환
             "Open": str(row["Open"]),
             "High": str(row["High"]),
             "Low": str(row["Low"]),
@@ -95,17 +95,17 @@ def perform_rnn_analysis(code, method, start, end):
             "Adj_Close": str(row["Adj Close"]),
             "Volume": str(row["Volume"])
         }
-        output_data["data"].append(data)
+        output_data["data"].append(data) # output_data에 append
 
-    for i in range(len(pred["Open"])):
+    for i in range(len(pred["Open"])): # 예측 데이터 담기
         data = {
             "date": "d+" + str(i + 1),
-            "Open": str(int(round(pred["Open"][i]))),  # Open 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
-            "High": str(int(round(pred["High"][i]))),  # High 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
-            "Low": str(int(round(pred["Low"][i]))),  # Low 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
-            "Close": str(int(round(pred["Close"][i]))),  # Close 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
-            "Adj_Close": str(int(round(pred["Adj Close"][i]))),  # Adj_Close 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
-            "Volume": str(int(round(pred["Volume"][i]))),  # Volume 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
+            "Open": str(int(round(pred["Open"][i]))),           # Open 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
+            "High": str(int(round(pred["High"][i]))),           # High 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
+            "Low": str(int(round(pred["Low"][i]))),             # Low 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
+            "Close": str(int(round(pred["Close"][i]))),         # Close 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
+            "Adj_Close": str(int(round(pred["Adj Close"][i]))), # Adj_Close 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
+            "Volume": str(int(round(pred["Volume"][i]))),       # Volume 값을 소수 첫째 자리에서 반올림하여 정수로 변환 후 문자열로 변환
         }
         output_data["data"].append(data)
 
@@ -117,14 +117,14 @@ def perform_rnn_analysis(code, method, start, end):
         print("Error converting data to JSON:", e)
         return None
 
-# 명령줄 인수를 파싱합니다.
+# node서버로부터 받은 parameter 변환
 code = sys.argv[1]
 method = sys.argv[2]
 start = sys.argv[3]
 end = sys.argv[4]
 
-# 선형 회귀 분석을 수행하고 결과를 출력합니다.
+# 순환신경망 분석을 수행하고 결과를 출력합니다.
 analysis_result = perform_rnn_analysis(code, method, start, end)
 if analysis_result is not None:
-    print("^")
+    print("^") # 구분자
     print(analysis_result)
