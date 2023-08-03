@@ -24,6 +24,7 @@ function AnalyzeForm(props) {
 	const {stock, stockName, method, start, end} = state;
 
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
+	const selectRef = useRef(null); // ref 생성
 
 	const [totalOption, setsotalOption] = useState(0);
 
@@ -31,7 +32,7 @@ function AnalyzeForm(props) {
 
 		const variable = { 
 			start: 0,             // 현재 페이지 번호
-			end: 10,     // 페이지당 표시될 질문 개수
+			end: 60,     // 페이지당 표시될 질문 개수
       	};
 
 		Axios.get('/api/stock/stockCodeName', { params: variable }) 
@@ -161,16 +162,25 @@ function AnalyzeForm(props) {
 		updateState("end", e.target.value);
 	}
 
+	const handlePopupScroll = (e) => {
+		const selectHeight = e.target.clientHeight;
+		const scrollHeight = e.target.scrollHeight;
+		const scrollTop = e.target.scrollTop;
+		console.log((scrollHeight - selectHeight - scrollTop));
+	}
+
 	return (
 		<>
 		<h2>종목 및 옵션 선택</h2>
 		<Form style={{ minWidth: '375px', textAlign: 'center' }} {...formItemLayout} onSubmit={handleSubmit} >
 			<Form.Item required label="종목">
 			<Select
+				// ref={selectRef}
 				showSearch
 				placeholder="Select a stock"
 				optionFilterProp="children"
 				onChange={onStockChange}
+				onPopupScroll={handlePopupScroll}
 				filterOption={(input, option) => { // SELECT BOX 필터링(검색기능)
 				const nameB = (option?.props.label ?? '').toLowerCase().includes(input.toLowerCase()); // option의 label(주식명)에 input 데이터가 포함되는지 체크
 				const codeB = (option?.props.value ?? '').toLowerCase().includes(input.toLowerCase()); // option의 value(주식코드)에 input 데이터가 포함되는지 체크
