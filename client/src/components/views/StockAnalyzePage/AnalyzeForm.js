@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react';
 import Axios from 'axios';
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message, Detail } from 'antd';
 
 const { Option } = Select;
 
@@ -24,7 +24,7 @@ function AnalyzeForm(props) {
 	const {stock, stockName, method, start, end} = state;
 
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
-	const selectRef = useRef(null); // ref 생성
+	const [loadAllInput, setLoadAllInput] = useState(false);
 
 	// const [totalOption, setsotalOption] = useState(0);
 
@@ -32,12 +32,14 @@ function AnalyzeForm(props) {
 
 		const variable = { 
 			start: 0,          
-			cnt: 20,     
+			cnt: 3000,     
       	};
-
+		  const s = performance.now(); 
 		Axios.get('/api/stock/stockCodeName', { params: variable }) 
 			.then(response => {
 				if(response.data.success) {
+					const e = performance.now(); 
+					console.log(e-s)
 					setCodeName(response.data.codeNames) // state update
 				} else {
 					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
@@ -163,6 +165,7 @@ function AnalyzeForm(props) {
 	}
 
 	const handlePopupScroll = (e) => {
+		e.preventDefault(); // refresh 방지
 		const selectHeight = e.target.clientHeight;
 		const scrollHeight = e.target.scrollHeight;
 		const scrollTop = e.target.scrollTop;
@@ -180,7 +183,7 @@ function AnalyzeForm(props) {
 			Axios.get('/api/stock/stockCodeName', { params: variable }) 
 			.then(response => {
 				if(response.data.success) {
-					e.preventDefault(); // refresh 방지
+					
 					setCodeName(codeName.concat(response.data.codeNames)) // state update
 					
 				} else {
@@ -194,6 +197,34 @@ function AnalyzeForm(props) {
 		
 		
 	}
+	const onSelectFocus = (e) => {
+		
+	}
+
+	const onInputKeyDown = (e) => {
+		if(!loadAllInput) {
+			setLoadAllInput(!loadAllInput);
+
+			const variable = { 
+				start: e.target.childNodes.length,          
+				cnt: 99999,     
+			};
+			
+			Axios.get('/api/stock/stockCodeName', { params: variable }) 
+			.then(response => {
+				if(response.data.success) {
+					
+					setCodeName(codeName.concat(response.data.codeNames)) // state update
+					
+				} else {
+					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
+				}
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		}
+	}
 
 	return (
 		<>
@@ -201,12 +232,18 @@ function AnalyzeForm(props) {
 		<Form style={{ minWidth: '375px', textAlign: 'center' }} {...formItemLayout} onSubmit={handleSubmit} >
 			<Form.Item required label="종목">
 			<Select
-				ref={selectRef}
-				showSearch
+				// ref={selectRef}
+				allowClear={true}
+				// autoFocus={true}
+				// loading={true}
+				notFoundContent = "검색결과가 없습니다."
+				showSearch={true}
+				// onInputKeyDown={onInputKeyDown}
 				placeholder="Select a stock"
 				optionFilterProp="children"
 				onChange={onStockChange}
-				onPopupScroll={handlePopupScroll}
+				// onPopupScroll={handlePopupScroll}
+				// onFocus={onSelectFocus}
 				filterOption={(input, option) => { // SELECT BOX 필터링(검색기능)
 				const nameB = (option?.props.label ?? '').toLowerCase().includes(input.toLowerCase()); // option의 label(주식명)에 input 데이터가 포함되는지 체크
 				const codeB = (option?.props.value ?? '').toLowerCase().includes(input.toLowerCase()); // option의 value(주식코드)에 input 데이터가 포함되는지 체크
@@ -214,7 +251,7 @@ function AnalyzeForm(props) {
 				return codeB;
 				}}
 			>
-				{Object.keys(codeName).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
+				{Object.keys(codeName.slice(0, 20)).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
 				<Option key={index} value={codeName[key].code} label={codeName[key].name}>
 					{codeName[key].name} ({codeName[key].code})
 				</Option>
