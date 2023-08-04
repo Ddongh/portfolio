@@ -26,13 +26,13 @@ function AnalyzeForm(props) {
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
 	const selectRef = useRef(null); // ref 생성
 
-	const [totalOption, setsotalOption] = useState(0);
+	const [totalOption, setsotalOption] = useState(30);
 
 	useEffect(() => {
 
 		const variable = { 
 			start: 0,             // 현재 페이지 번호
-			end: 60,     // 페이지당 표시될 질문 개수
+			end: totalOption,     // 페이지당 표시될 질문 개수
       	};
 
 		Axios.get('/api/stock/stockCodeName', { params: variable }) 
