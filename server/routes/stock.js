@@ -81,17 +81,17 @@ router.post('/stockAnalyze/question', (req, res) => { // 질문 저장 라우터
 
 router.get('/stockCodeName', (req, res) => { // 종목 코드/이름 리스트 크롤링 라우터
 	const start  = parseInt(req.query.start); // 조회할 코드/이름 정보 start index 
-    const end = parseInt(req.query.end); 	  // 조회할 코드/이름 정보 end index 
+    const cnt = parseInt(req.query.cnt); 	  // 조회할 코드/이름 정보 end index 
     console.log("Landing Page Router Start!!!!!");
     console.log("start: ", start); 
-    console.log("end : ", end); 
+    console.log("end : ", cnt); 
 
     // 페이지네이션 처리를 위해 skip 값과 limit 값 계산
 
     StockCodeName.find()
         .sort({ name: 1 }) // 이름 기준으로 오름차순 정렬
         .skip(start)
-        .limit(end)
+        .limit(cnt)
         .exec((err, codeNames) => {
             if(err) return res.status(400).send(err);
             res.status(200).json({ success: true, codeNames});

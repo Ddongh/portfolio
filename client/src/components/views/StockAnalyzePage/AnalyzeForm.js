@@ -26,13 +26,13 @@ function AnalyzeForm(props) {
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
 	const selectRef = useRef(null); // ref 생성
 
-	const [totalOption, setsotalOption] = useState(0);
+	// const [totalOption, setsotalOption] = useState(0);
 
 	useEffect(() => {
 
 		const variable = { 
-			start: 0,             // 현재 페이지 번호
-			end: 60,     // 페이지당 표시될 질문 개수
+			start: 0,          
+			cnt: 20,     
       	};
 
 		Axios.get('/api/stock/stockCodeName', { params: variable }) 
@@ -166,7 +166,33 @@ function AnalyzeForm(props) {
 		const selectHeight = e.target.clientHeight;
 		const scrollHeight = e.target.scrollHeight;
 		const scrollTop = e.target.scrollTop;
-		console.log((scrollHeight - selectHeight - scrollTop));
+		const scrollPosition = scrollHeight - selectHeight - scrollTop;
+		// console.log(scrollPosition);
+		// debugger;
+		console.log(e.target.childElementCount);
+		// e.target.childNodes.length;
+
+		const variable = { 
+			start: e.target.childNodes.length,          
+			cnt: 20,     
+      	};
+		if(scrollPosition < 200) {
+			Axios.get('/api/stock/stockCodeName', { params: variable }) 
+			.then(response => {
+				if(response.data.success) {
+					e.preventDefault(); // refresh 방지
+					setCodeName(codeName.concat(response.data.codeNames)) // state update
+					
+				} else {
+					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
+				}
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		}
+		
+		
 	}
 
 	return (
@@ -175,7 +201,7 @@ function AnalyzeForm(props) {
 		<Form style={{ minWidth: '375px', textAlign: 'center' }} {...formItemLayout} onSubmit={handleSubmit} >
 			<Form.Item required label="종목">
 			<Select
-				// ref={selectRef}
+				ref={selectRef}
 				showSearch
 				placeholder="Select a stock"
 				optionFilterProp="children"
