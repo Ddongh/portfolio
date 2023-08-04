@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const stockCodeNameSchema = mongoose.Schema({
+const stockCodeNameSchema = mongoose.Schema({   
     code: {
         type:String
     },
