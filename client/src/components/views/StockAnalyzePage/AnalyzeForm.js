@@ -24,56 +24,35 @@ function AnalyzeForm(props) {
 	const {stock, stockName, method, start, end} = state;
 
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
+	const [codeNameTmp, setCodeNameTmp] = useState([]); 
 	const selectRef = useRef(null); // ref 생성
 
-	const [totalOption, setsotalOption] = useState(0);
-
 	useEffect(() => {
-
-		const variable = { 
-			start: 0,             // 현재 페이지 번호
-			end: 60,     // 페이지당 표시될 질문 개수
-      	};
-
-		Axios.get('/api/stock/stockCodeName', { params: variable }) 
-			.then(response => {
-				if(response.data.success) {
-					setCodeName(response.data.codeNames) // state update
-				} else {
-					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
-				}
-			})
-			.catch(error => {
-				console.error(error);
-			});
+		const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList")); // 로컬 스토리지에 저장된 주식 코드/이름 리스트 가져오기
 		
+		if(localCodeNameList == null || localCodeNameList.expire < Date.now()) { // 로컬스토리지에 저장여부 확인 및 만료일자 체크
+			const s = performance.now(); 
+			Axios.get('/api/stock/stockCodeName') 
+				.then(response => {
+					setCodeName(response.data.codeNames) 	// codeName update
+					setCodeNameTmp(response.data.codeNames.slice(0, 20)); // 렌더링 될 옵션(렌더링 시간을 줄이기 위해)
+					localStorage.removeItem("codeNameList") // 로컬스토리지 데이터 삭제
+					response.data["expire"] = Date.now() + 60 * 60 * 24 * 1000; // 만료일자 지정(초*분*시*1000)
+					localStorage.setItem("codeNameList", JSON.stringify(response.data)); // 로컬스토리지에 저장
+					const e = performance.now();
+					console.log("서버요청 소요 시간(ms) : ", e-s);
+				})
+				.catch(error => {
+					console.error(error);
+				});
+		} else { // 로컬스토리지에 데이터가 있고 만료일이 지나지 않으면 그대로 사용
+			const s = performance.now();
+			setCodeName(localCodeNameList.codeNames); // codeName state update
+			setCodeNameTmp(localCodeNameList.codeNames.slice(0, 20)); // 렌더링 될 옵션(렌더링 시간을 줄이기 위해)
+			const e = performance.now()
+			console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
+		}
 	}, [])
-	
-
-	// useEffect(() => {
-	// 	const localCodeNameList = JSON.parse(localStorage.getItem("codeNameList")); // 로컬 스토리지에 저장된 주식 코드/이름 리스트 가져오기
-		
-	// 	if(localCodeNameList == null || localCodeNameList.expire < Date.now()) { // 로컬스토리지에 저장여부 확인 및 만료일자 체크
-	// 		const s = performance.now(); 
-	// 		Axios.get('/api/stock/stockCodeName') 
-	// 			.then(response => {
-	// 				setCodeName(response.data) // state update
-	// 				localStorage.removeItem("codeNameList") // 로컬스토리지 데이터 삭제
-	// 				response.data["expire"] = Date.now() + 60 * 60 * 24 * 1000; // 만료일자 지정(초*분*시*1000)
-	// 				localStorage.setItem("codeNameList", JSON.stringify(response.data)); // 로컬스토리지에 저장
-	// 				const e = performance.now();
-	// 				console.log("서버요청 소요 시간(ms) : ", e-s);
-	// 			})
-	// 			.catch(error => {
-	// 				console.error(error);
-	// 			});
-	// 	} else { // 로컬스토리지에 데이터가 있고 만료일이 지나지 않으면 그대로 사용
-	// 		const s = performance.now();
-	// 		setCodeName(localCodeNameList); // state update
-	// 		const e = performance.now()
-	// 		console.log("세션 스토리지 사용 소요시간(ms) : ", e-s);
-	// 	}
-	// }, [])
 	
 	const validate = () => { // validation check
 
@@ -163,10 +142,36 @@ function AnalyzeForm(props) {
 	}
 
 	const handlePopupScroll = (e) => {
-		const selectHeight = e.target.clientHeight;
-		const scrollHeight = e.target.scrollHeight;
-		const scrollTop = e.target.scrollTop;
-		console.log((scrollHeight - selectHeight - scrollTop));
+		const selectHeight = e.target.clientHeight; // 드롭다운 목록 높이
+		const scrollHeight = e.target.scrollHeight; // 드롭다운 목록 전체의 스크롤 가능한 높이
+		const scrollTop = e.target.scrollTop;       // 현재 스크롤 위치
+		const scrollPosition = parseInt(scrollHeight - selectHeight - scrollTop); // 스크롤시 최소위치값이 0이 되도록 변환
+		const optionCnt = e.target.childElementCount; // 현재 렌더링된 옵션 개수
+
+		console.log(scrollPosition);
+
+		if(scrollPosition < 10) { // 스크롤 높이가 10 이하이면
+			setCodeNameTmp(codeNameTmp.concat(codeName.slice(optionCnt, optionCnt+20))); // 옵션 추가
+		}
+	}
+
+	const search = (value) => { // select박스 검색기능
+		if(value === "") { // 검색어가 없으면
+			setCodeNameTmp(codeName.slice(0, 20)); // 첫 20개 렌더링
+			return
+		}
+
+		const filteredCodeName = codeName.filter((item) => {
+			if(item.name.toLowerCase().includes(value.toLowerCase())) { // value와 name비교
+				return true;
+			}
+			if(item.code.toLowerCase().includes(value.toLowerCase())) { // value와 code비교
+				return true
+			}
+			return false
+		});
+		setCodeNameTmp(filteredCodeName); // 렌더링될 욥션 uptate
+		// return filteredCodeName
 	}
 
 	return (
@@ -175,22 +180,18 @@ function AnalyzeForm(props) {
 		<Form style={{ minWidth: '375px', textAlign: 'center' }} {...formItemLayout} onSubmit={handleSubmit} >
 			<Form.Item required label="종목">
 			<Select
-				// ref={selectRef}
-				showSearch
+				ref={selectRef}
+				showSearch={true}
 				placeholder="Select a stock"
 				optionFilterProp="children"
 				onChange={onStockChange}
 				onPopupScroll={handlePopupScroll}
-				filterOption={(input, option) => { // SELECT BOX 필터링(검색기능)
-				const nameB = (option?.props.label ?? '').toLowerCase().includes(input.toLowerCase()); // option의 label(주식명)에 input 데이터가 포함되는지 체크
-				const codeB = (option?.props.value ?? '').toLowerCase().includes(input.toLowerCase()); // option의 value(주식코드)에 input 데이터가 포함되는지 체크
-				if(nameB) return nameB;
-				return codeB;
-				}}
+				onSearch={search}
+				filterOption={false}
 			>
-				{Object.keys(codeName).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
-				<Option key={index} value={codeName[key].code} label={codeName[key].name}>
-					{codeName[key].name} ({codeName[key].code})
+				{Object.keys(codeNameTmp).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
+				<Option key={index} value={codeNameTmp[key].code} label={codeNameTmp[key].name}>
+					{codeNameTmp[key].name} ({codeNameTmp[key].code})
 				</Option>
 				))}
 			</Select>
