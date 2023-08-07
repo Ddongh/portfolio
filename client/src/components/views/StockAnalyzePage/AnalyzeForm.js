@@ -24,6 +24,8 @@ function AnalyzeForm(props) {
 	const {stock, stockName, method, start, end} = state;
 
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
+	const [codeNameIdx, setCodeNameIdx] = useState([0, 20]);
+	const [codeNameTmp, setCodeNameTmp] = useState([]); 
 	const selectRef = useRef(null); // ref 생성
 
 	// const [totalOption, setsotalOption] = useState(0);
@@ -32,13 +34,14 @@ function AnalyzeForm(props) {
 
 		const variable = { 
 			start: 0,          
-			cnt: 20,     
+			cnt: 99999,     
       	};
 
 		Axios.get('/api/stock/stockCodeName', { params: variable }) 
 			.then(response => {
 				if(response.data.success) {
 					setCodeName(response.data.codeNames) // state update
+					setCodeNameTmp(response.data.codeNames.slice(0, 20));
 				} else {
 					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
 				}
@@ -46,7 +49,7 @@ function AnalyzeForm(props) {
 			.catch(error => {
 				console.error(error);
 			});
-		
+
 	}, [])
 	
 
@@ -162,38 +165,49 @@ function AnalyzeForm(props) {
 		updateState("end", e.target.value);
 	}
 
+	useEffect(() => {
+		// debugger;
+		setCodeNameTmp(  codeName.slice(codeNameIdx[0], codeNameIdx[1]) )
+		// debugger;
+	}, [codeNameIdx])
+	
+
 	const handlePopupScroll = (e) => {
 		const selectHeight = e.target.clientHeight;
 		const scrollHeight = e.target.scrollHeight;
 		const scrollTop = e.target.scrollTop;
 		const scrollPosition = scrollHeight - selectHeight - scrollTop;
-		// console.log(scrollPosition);
-		// debugger;
-		console.log(e.target.childElementCount);
-		// e.target.childNodes.length;
+		console.log(scrollPosition);
 
-		const variable = { 
-			start: e.target.childNodes.length,          
-			cnt: 20,     
-      	};
-		if(scrollPosition < 200) {
-			Axios.get('/api/stock/stockCodeName', { params: variable }) 
-			.then(response => {
-				if(response.data.success) {
-					e.preventDefault(); // refresh 방지
-					setCodeName(codeName.concat(response.data.codeNames)) // state update
-					
-				} else {
-					console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
-				}
-			})
-			.catch(error => {
-				console.error(error);
-			});
+		if(scrollPosition < 100) {
+			setCodeNameIdx([codeNameIdx[0]+1, codeNameIdx[1]+1]);
+			// debugger;
+
 		}
-		
-		
+		// console.log(e.target.childElementCount);
+
+		// const variable = { 
+		// 	start: e.target.childNodes.length,          
+		// 	cnt: 20,     
+      	// };
+		// if(scrollPosition < 200) {
+		// 	Axios.get('/api/stock/stockCodeName', { params: variable }) 
+		// 	.then(response => {
+		// 		if(response.data.success) {
+		// 			e.preventDefault(); // refresh 방지
+		// 			setCodeName(codeName.concat(response.data.codeNames)) // state update
+					
+		// 		} else {
+		// 			console.log("주식 코드/이름 정보를 가져오는데 실패했습니다.")
+		// 		}
+		// 	})
+		// 	.catch(error => {
+		// 		console.error(error);
+		// 	});
+		// }
 	}
+
+	// const codeNameTmp = codeName.slice(codeNameIdx[0], codeNameIdx[1]);
 
 	return (
 		<>
@@ -214,9 +228,9 @@ function AnalyzeForm(props) {
 				return codeB;
 				}}
 			>
-				{Object.keys(codeName).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
-				<Option key={index} value={codeName[key].code} label={codeName[key].name}>
-					{codeName[key].name} ({codeName[key].code})
+				{Object.keys(codeNameTmp).map((key, index) => ( // 주식 code,name 데이터로 select option 생성
+				<Option key={index} value={codeNameTmp[key].code} label={codeNameTmp[key].name}>
+					{codeNameTmp[key].name} ({codeNameTmp[key].code})
 				</Option>
 				))}
 			</Select>
