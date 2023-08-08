@@ -2,6 +2,9 @@ import React, {useEffect, useState, useRef} from 'react';
 import Axios from 'axios';
 import { Form, Input, Select, Button, message } from 'antd';
 
+
+import { FadeLoader } from 'react-spinners';
+
 const { Option } = Select;
 
 const formItemLayout = {
@@ -25,6 +28,7 @@ function AnalyzeForm(props) {
 
 	const [codeName, setCodeName] = useState([]); // 주식 코드/이름 리스트
 	const [codeNameTmp, setCodeNameTmp] = useState([]); 
+	const [isLoading, setIsLoading] = useState(false);
 	const selectRef = useRef(null); // ref 생성
 
 	useEffect(() => {
@@ -97,13 +101,15 @@ function AnalyzeForm(props) {
 			start : start,  // 시작일
 			end : end,      // 종료일
 		}
-
+		setIsLoading(true)
 		Axios.post('/api/stock/stockAnalyze/'+method, variable) // method에 해당하는 라우터 실행
 			.then(response => {
 				console.log(response.data);
 				updateState("data", response.data.data); // 크롤링 및 예측 데이터로 data state update
+				setIsLoading(false)
 			})
 			.catch(err => { // 에러처리
+				setIsLoading(false)
 				console.log(err.response.data);
 				message.error({
 				content: stockName + "의 " + start + " ~ " + end + "기간에 대한 주가 수집에 실패했습니다.",
@@ -177,6 +183,14 @@ function AnalyzeForm(props) {
 	return (
 		<>
 		<h2>종목 및 옵션 선택</h2>
+
+		
+		{isLoading && <FadeLoader style={{zIndex: "9999", position:"absolute"}} /> }
+
+		{/* { isLoading && <TouchBallLoading style={{zIndex: "9999", position:"absolute"}} color="#00ff00" />} */}
+		
+		
+
 		<Form style={{ minWidth: '375px', textAlign: 'center' }} {...formItemLayout} onSubmit={handleSubmit} >
 			<Form.Item required label="종목">
 			<Select
