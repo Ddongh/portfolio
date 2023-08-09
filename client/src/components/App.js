@@ -8,6 +8,7 @@ import RegisterPage from "./views/RegisterPage/RegisterPage.js";
 import NavBar from "./views/NavBar/NavBar";
 import Footer from "./views/Footer/Footer";
 import StockAnalyzePage from "./views/StockAnalyzePage/StockAnalyzePage.js";
+import QuestionDetail from './views/LandingPage/QuestionDetail';
 
 //null   Anyone Can go inside
 //true   only logged in user can go inside
@@ -19,10 +20,11 @@ function App() {
       <NavBar />
       <div style={{ paddingTop: '69px', minHeight: 'calc(100vh - 80px)' }}>
         <Switch>
-          <Route exact path="/" component={Auth(LandingPage, null)} />
+          <Route exact path="/" component={Auth(LandingPage, true)} />
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           <Route exact path="/stockAnalyze" component={Auth(StockAnalyzePage, true)} />
+          <Route exact path="/questinoDetail" component={Auth(QuestionDetail, true)} />
         </Switch>
       </div>
       <Footer />

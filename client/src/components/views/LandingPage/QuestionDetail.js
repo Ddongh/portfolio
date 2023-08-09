@@ -13,9 +13,12 @@ import Comment from './Comment';
 import { updateLocale } from "moment";
 // import ReactHtmlParser from 'react-html-parser';
 
-const QuestionDetail = ({ selectedQuestion }) => {
+const QuestionDetail = ({ selectedQuestion, record }) => {
+    debugger;
     const {stock, stockName, method, start, end, data, question, ai_answer, writer, title } = selectedQuestion;
     const [commentList, setCommentList] = useState([]);
+    const user = useSelector(state => state.user); // 로그인 유저정보
+
     const chartRef = useRef();
     const chartButton = useRef();
     
@@ -49,6 +52,10 @@ const QuestionDetail = ({ selectedQuestion }) => {
     const refreshComment = (newComment) => { // 댓글 등록 후 refresh function
         setCommentList(commentList.concat(newComment)) // 작성한 질문을 state에 추가
     }
+
+    const editQuestion = () => {
+        alert("편집하기~~~~")
+    }
     
     return (
         <div style={{ width:"50%" }}>
@@ -56,6 +63,11 @@ const QuestionDetail = ({ selectedQuestion }) => {
                 <Button ref={chartButton} type="primary" size="large" onClick={displayChart}> 
                     {chartButtonState}
                 </Button>
+                { writer._id === user.userData._id &&
+                    <Button type="primary" size="large" onClick={editQuestion} >
+                        수정하기
+                    </Button>
+                }
             </div>
             <div ref={chartRef} style={{display:"block"}}>
                 <CandleStickChart props={selectedQuestion} />

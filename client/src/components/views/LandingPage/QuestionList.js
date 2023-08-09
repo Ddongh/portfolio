@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table, Pagination } from 'antd';
 import Axios from 'axios';
 import { format } from 'date-fns';
+import { useHistory } from 'react-router-dom';
 
 const QuestionList = ({ setSelectedQuestion }) => {
     
@@ -9,9 +10,12 @@ const QuestionList = ({ setSelectedQuestion }) => {
     const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지 번호
     const [questionsPerPage] = useState(10);            // 페이지에 표시할 질문 개수
     const [totalCount, setTotalCount] = useState(-1);   // 전체 질문 개수
+	const history = useHistory();
 
     const onRowSelect = (record, index) => {
-        setSelectedQuestion(record);
+		debugger;
+		history.push("/questinoDetail", {record})
+        // setSelectedQuestion(record);
     }
     useEffect(() => { // 페이지 접근시 전제 질문 개수 가져오기
 		Axios.get('/api/landing/total')
@@ -27,7 +31,7 @@ const QuestionList = ({ setSelectedQuestion }) => {
 		const variable = { 
 			page: currentPage,             // 현재 페이지 번호
 			perPage: questionsPerPage,     // 페이지당 표시될 질문 개수
-      };
+      	};
 
 		Axios.get('/api/landing', { params: variable }) // 해당문서 가져오기
 			.then(response => {
