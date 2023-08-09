@@ -24,7 +24,7 @@ function App() {
           <Route exact path="/login" component={Auth(LoginPage, false)} />
           <Route exact path="/register" component={Auth(RegisterPage, false)} />
           <Route exact path="/stockAnalyze" component={Auth(StockAnalyzePage, true)} />
-          <Route exact path="/questinoDetail" component={Auth(QuestionDetail, true)} />
+          <Route exact path="/questinoDetail/:id" component={Auth(QuestionDetail, true)} />
         </Switch>
       </div>
       <Footer />

@@ -6,16 +6,23 @@ import { Editor } from 'react-draft-wysiwyg';
 import Axios from 'axios';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+// import { useHistory } from 'react-router-dom';
 import ReactHtmlParser from 'react-html-parser';
 import { useRef } from 'react';
 import Comment from './Comment';
-import { updateLocale } from "moment";
+// import { updateLocale } from "moment";
+import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router';
 // import ReactHtmlParser from 'react-html-parser';
 
-const QuestionDetail = ({ selectedQuestion, record }) => {
-    debugger;
-    const {stock, stockName, method, start, end, data, question, ai_answer, writer, title } = selectedQuestion;
+const QuestionDetail = ({selectedQuestion}) => {
+    const params = useParams();
+    console.log(params);
+
+    const location = useLocation();
+    const [record, setRecord] = useState([]);
+
+    // const {stock, stockName, method, start, end, data, question, ai_answer, writer, title } = record;
     const [commentList, setCommentList] = useState([]);
     const user = useSelector(state => state.user); // 로그인 유저정보
 
@@ -35,18 +42,34 @@ const QuestionDetail = ({ selectedQuestion, record }) => {
     }
 
     useEffect(() => { // 질문에 해당하는 모든 comment 가져오기
-        const variables = {
-            questionId : selectedQuestion._id
-        }
 
-        Axios.get('api/comment/getComment', { params: variables })
+        const variable = {
+        questionId : params.id
+        }
+        Axios.get('/api/landing/getQuestion', { params: variable })
         .then(response => {
             if(response.data.success) {
-                setCommentList(response.data.comments); // commentList update
+                console.log(response.data)
+                setRecord(response.data.questions[0]);
+                
+                const variables = {
+                    questionId : response.data.questions[0]._id
+                }
+        
+                Axios.get('/api/comment/getComment', { params: variables })
+                .then(response => {
+                    if(response.data.success) {
+                        setCommentList(response.data.comments); // commentList update
+                    } else {
+                        alert('comment를 를 가져오지 못했습니다.')
+                    }
+                })
             } else {
                 alert('comment를 를 가져오지 못했습니다.')
             }
         })
+
+        
     }, [])
     
     const refreshComment = (newComment) => { // 댓글 등록 후 refresh function
@@ -58,64 +81,71 @@ const QuestionDetail = ({ selectedQuestion, record }) => {
     }
     
     return (
-        <div style={{ width:"50%" }}>
-            <div style={{marginTop:"10%", display: 'flex'}}>
-                <Button ref={chartButton} type="primary" size="large" onClick={displayChart}> 
-                    {chartButtonState}
-                </Button>
-                { writer._id === user.userData._id &&
-                    <Button type="primary" size="large" onClick={editQuestion} >
-                        수정하기
-                    </Button>
-                }
-            </div>
-            <div ref={chartRef} style={{display:"block"}}>
-                <CandleStickChart props={selectedQuestion} />
-            </div>
-            <table class="basicTable" style={{marginTop:"10%"}}>
-            <colgroup>
-                <col width={"10%"} />
-                <col width={"40%"} />
-                <col width={"10%"} />
-                <col width={"40%"} />
-            </colgroup>
-                <tbody>
-                    <tr>
-                        <th>제목</th>
-                        <td colSpan={3}>
-                            { title }
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>종목명</th>
-                        <td>{ stockName }</td>
-                        <th>종목코드</th>
-                        <td>{ stock }</td>
-                    </tr>
-                    <tr>
-                        <th>분석 시작일</th>
-                        <td>{ start }</td>
-                        <th>분석 종료일</th>
-                        <td>{ end }</td>
-                    </tr>
-                    <tr>
-                        <th>분석방법</th>
-                        <td>{ method }</td>
-                        <th>작성자</th>
-                        <td>{ writer.name }</td>
-                    </tr>
-                    <tr>
-                        <th>최근동향</th>
-                        <td colspan="3"> { ReactHtmlParser(ai_answer) } </td>
-                    </tr>
-                    <tr>
-                        <th>질문</th>
-                        <td style={{verticalAlign:"top", height: "300px"}} colspan="3">{ ReactHtmlParser(question) }</td>
-                    </tr>
-                </tbody>
-            </table>
-            <Comment refreshComment={refreshComment} commentList={commentList} selectedQuestion={selectedQuestion} />
+        // <div style={{ width:"50%" }}>
+        // <div>
+        //     {record && Object.keys(record).length > 0 && (
+        //         <p>{JSON.stringify(record)}</p>
+        //     )}
+        // </div>
+
+       
+        <div className="app_l" >
+            {record && Object.keys(record).length > 0 && (
+                <div style={{width:"70%"}}>
+                    <div ref={chartRef} style={{display:"block"}}>
+                        <CandleStickChart props={record} />
+                    </div>
+                    <table className="basicTable" style={{marginTop:"10%"}}>
+                    <colgroup>
+                        <col width={"10%"} />
+                        <col width={"40%"} />
+                        <col width={"10%"} />
+                        <col width={"40%"} />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <th>제목</th>
+                            <td colSpan={3}>
+                                { record.title }
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>종목명</th>
+                            <td>{ record.stockName }</td>
+                            <th>종목코드</th>
+                            <td>{ record.stock }</td>
+                        </tr>
+                        <tr>
+                            <th>분석 시작일</th>
+                            <td>{ record.start }</td>
+                            <th>분석 종료일</th>
+                            <td>{ record.end }</td>
+                        </tr>
+                        <tr>
+                            <th>분석방법</th>
+                            <td>{ record.method }</td>
+                            <th>작성자</th>
+                            <td>{ record.writer.name }</td>
+                        </tr>
+                        <tr>
+                            <th>최근동향</th>
+                            <td colspan="3"> { ReactHtmlParser(record.ai_answer) } </td>
+                        </tr>
+                        <tr>
+                            <th>질문</th>
+                            <td style={{verticalAlign:"top", height: "300px"}} colspan="3">{ ReactHtmlParser(record.question) }</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <Comment refreshComment={refreshComment} commentList={commentList} selectedQuestion={record} />
+                    </div>
+
+            )}
+            
+            
+            
         </div>
+        
     );
 }
 

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { Stock } = require("../models/Stock");
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 router.get('/total', (req, res) => {
     Stock.countDocuments({}, (err, totalCount) => {
@@ -24,6 +26,20 @@ router.get('/', (req, res) => {
         .sort({ createdAt: -1 }) // 작성일 기준으로 내림차순 정렬
         .skip(skip)
         .limit(limit)
+        .populate('writer') // Stock 문서의 writer 필드에 해당하는 User 문서 연결
+        .exec((err, questions) => {
+            if(err) return res.status(400).send(err);
+            res.status(200).json({ success: true, questions});
+        })
+});
+
+router.get('/getQuestion', (req, res) => { 
+    console.log('getQuestino Start !!!!!!!!!!!!!!!!')
+    const { questionId } = req.query; // 질문 id
+    console.log("questionId >>> ", questionId);
+    const questionObjectId = ObjectId(questionId);
+    
+    Stock.find({ _id: questionObjectId })
         .populate('writer') // Stock 문서의 writer 필드에 해당하는 User 문서 연결
         .exec((err, questions) => {
             if(err) return res.status(400).send(err);

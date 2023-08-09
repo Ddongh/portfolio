@@ -13,8 +13,8 @@ const QuestionList = ({ setSelectedQuestion }) => {
 	const history = useHistory();
 
     const onRowSelect = (record, index) => {
-		debugger;
-		history.push("/questinoDetail", {record})
+		// debugger;
+		history.push("/questinoDetail/" + record._id)
         // setSelectedQuestion(record);
     }
     useEffect(() => { // 페이지 접근시 전제 질문 개수 가져오기
